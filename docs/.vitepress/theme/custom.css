@@ -393,3 +393,50 @@ input,
   letter-spacing: 0.04em;
   color: var(--vp-c-text-2);
 }
+
+/* ── Screenshots ──────────────────────────────────────────────────────────
+ *
+ * Captured at 1600px and rendered in a column around half that, so they open
+ * full size on click. The rule below is the affordance: without it a reader has
+ * no reason to think the picture does anything, and the detail the screenshot
+ * was taken for stays unreachable.
+ */
+.vp-doc img {
+  cursor: zoom-in;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 4px;
+  /* The console is near-black. On the light theme an unbordered screenshot
+     bleeds into the page and reads as a hole rather than a picture. */
+  display: block;
+}
+
+.vp-doc img:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 3px;
+}
+
+/* medium-zoom clones the image into an overlay; the cloned node keeps the
+   class, and a zoom-in cursor on the already-zoomed copy is a lie. */
+.medium-zoom-image--opened {
+  cursor: zoom-out;
+  border: none;
+  border-radius: 0;
+}
+
+.medium-zoom-overlay {
+  z-index: 30;
+}
+
+.medium-zoom-image--opened {
+  z-index: 31;
+}
+
+/* The caption under each screenshot. Italic, smaller, and secondary, so it
+   reads as a note about the picture rather than the next paragraph. */
+.vp-doc p > em:only-child {
+  display: block;
+  margin-top: -0.4rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--vp-c-text-2);
+}
