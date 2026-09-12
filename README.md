@@ -2,10 +2,12 @@
   <img src="docs/public/logo.svg" alt="" width="76" height="76" />
 </p>
 
-# CertPilot API documentation
+# CertPilot documentation
 
-The public API reference for [CertPilot](https://github.com/certpilot/certpilot),
-built with [VitePress](https://vitepress.dev) and published to GitHub Pages.
+The published documentation for
+[CertPilot](https://github.com/certpilot/certpilot) — the guide to how it works
+and how to run it, and the reference for all 121 endpoints. Built with
+[VitePress](https://vitepress.dev) and published to GitHub Pages.
 
 **https://certpilot.github.io/certpilot-docs/**
 
@@ -100,44 +102,64 @@ none; `Health`, `Sign-in discovery`, `The caller's own identity`, `The agent
 API` and `Custom metadata fields` have no prose in the source yet, so those
 pages render as they always did.
 
-## Whole pages are vendored as well
+## The guide is vendored as well
 
-The guides are fragments of one file. `docs/architecture.md` in the code
-repository is a page in its own right -- the three decisions the system is built
-on, the processes, the request path, where the private keys are -- and it was in
-the same position the API prose used to be in: readable only after cloning the
-code.
+The guides above are fragments of one file. The fifteen documents under
+**Guide** are whole pages from the code repository -- architecture, discovery,
+monitoring, deployment, the agent, posture, the Vault gateway, writing a
+gateway, configuration, operations, security, the database, troubleshooting,
+getting started and implementation status.
 
-That is backwards for the one page a reader arrives on before they know what
-CertPilot is. Publishing it here means somebody deciding whether to run it gets
-an account of what it is, rather than a list of 121 endpoints.
+They were in the same position the API prose used to be in: about four thousand
+lines, readable only by somebody who had already cloned the code. That is
+backwards for the pages a reader reaches before they know what CertPilot is.
 
-`scripts/sync-pages.mjs` fetches it whole. The only change on the way in is
-links: `security.md` and `../core/store/store.go` resolved to real things inside
-the code repository and to nothing here, so both become GitHub URLs. Anything
-still relative afterwards is a hard error -- this site fails the build on a dead
-link rather than shipping one, and a silent rewrite would produce a page
-promising an explanation it no longer points to.
+`scripts/sync-pages.mjs` fetches them whole, with the screenshots they
+reference. Three things happen on the way in:
+
+- **Links between published pages become site routes.** `security.md` in the
+  source becomes `/security` here, anchors intact, so the set reads as one
+  document instead of a ring of round trips to GitHub.
+- **Links to code become GitHub URLs.** `../core/store/store.go` resolved to a
+  real file in the code repository and to nothing here.
+- **Screenshots are copied into `docs/public/images/`** and their links become
+  `/images/…`, which VitePress resolves against `base` on the published subpath.
+
+Anything still unresolved after that is a hard error rather than a guess. This
+site fails the build on a dead link rather than shipping one, and a silent
+rewrite would leave prose promising an explanation it no longer points to.
 
 ```bash
 npm run sync:pages                 # refresh from the default branch
 npm run sync:pages -- --check      # exit 1 if stale (CI runs this)
 
-# Author the page in the code repository, then sync from a local checkout:
+# Author the pages in the code repository, then sync from a local checkout:
 CERTPILOT_DOCS_DIR=../certpilot/docs npm run sync:pages
 ```
 
-**Edit `docs/architecture.md` in the code repository, not here.** The synced
-copy carries a header saying so and sets `editLink: false`, because the edit
-button would otherwise offer to change a file the next sync overwrites.
+**Edit these in the code repository, not here.** Each synced copy carries a
+header saying so and sets `editLink: false`, because the edit button would
+otherwise offer to change a file the next sync overwrites.
 
 Each page in the manifest names a sentinel heading that must appear in what
 comes back. A file renamed upstream, or a 404 served as a 200, otherwise arrives
 as a page that builds cleanly and says nothing.
 
+`api-reference.md` is deliberately not in the manifest: `sync-guides.mjs`
+already splits it into the per-resource fragments that sit beside the generated
+route tables, and importing it whole as well would give a reader two accounts of
+the same endpoint with no way to tell which is current.
+
+### The sidebar and the home page read the same file
+
+`docs/.vitepress/guide-sidebar.json` holds the guide's groups. The sidebar is
+built from it and so is the directory on the landing page. Two copies would give
+the two places different answers about what the guide contains, and nothing
+would say which was right.
+
 ### Diagrams
 
-The architecture page carries mermaid diagrams, rendered here by
+The architecture and deployment pages carry mermaid diagrams, rendered here by
 `vitepress-plugin-mermaid` and by GitHub natively, so one source displays in
 both places.
 
@@ -164,7 +186,7 @@ npm run preview  # serve the built site
 | `npm run gen` | Regenerate the endpoint pages from `routes.json` |
 | `npm run sync` | Refresh `routes.json` from the CertPilot repository |
 | `npm run sync:guides` | Refresh the guide fragments from `docs/api-reference.md` |
-| `npm run sync:pages` | Refresh the whole pages, today just `architecture.md` |
+| `npm run sync:pages` | Refresh the fifteen guide pages and their screenshots |
 | `npm run check` | Fail if any route is undocumented or any anchor is broken |
 
 Hand-written pages live in `docs/api/` — authentication, roles, conventions,
@@ -173,13 +195,16 @@ be edited directly.
 
 ## Keeping it in sync
 
-`npm run sync` fetches `routes.json` from the CertPilot repository's default
-branch. A scheduled workflow runs it weekly and opens a pull request when the
-API has changed, so a new endpoint shows up here without anyone remembering to
-push it.
+Everything on this site comes from the CertPilot repository: the route table,
+the API prose, and the fifteen guide pages with their screenshots. A scheduled
+workflow refreshes all three weekly and opens a pull request when anything has
+changed, so a new endpoint or a rewritten explanation shows up here without
+anyone remembering to push it.
 
-`npm run sync -- --check` exits non-zero if the vendored copy is stale, which is
-what CI runs on a pull request.
+Each of `sync`, `sync:guides` and `sync:pages` takes `-- --check`, which exits
+non-zero if the vendored copy is stale. CI runs all three on a pull request, so
+the cost of vendoring — drift nobody notices — is paid by a failing check rather
+than by a reader.
 
 ## Conventions
 

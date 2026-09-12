@@ -2,10 +2,10 @@
 layout: page
 sidebar: false
 aside: false
-title: CertPilot API reference
+title: CertPilot documentation
 description: >-
-  REST API reference for CertPilot. Certificate lifecycle management, CA health
-  monitoring, and the estate you get paged about.
+  Open-source PKI and certificate lifecycle management. How it works, how to run
+  it, and every endpoint.
 ---
 
 <HomeIndex />
