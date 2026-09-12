@@ -98,7 +98,7 @@ must be stable across restarts. The Vault gateway keeps only the Vault tokens
 it is currently renewing, in memory.
 
 This is why the channel is mutually authenticated by default: it carries CSRs,
-private keys, and CA credentials. See [security.md](https://github.com/certpilot/certpilot/blob/main/docs/security.md).
+private keys, and CA credentials. See [security.md](/security).
 
 ## Decision 2 — the store is an interface with two implementations
 
@@ -122,7 +122,7 @@ Four classes, all found in production-shaped runs before the suite was written:
 
 The suite runs the same assertions against both implementations, plus two
 PostgreSQL-only tests for classes it alone can express. `make test-store`
-runs it. See [database.md](https://github.com/certpilot/certpilot/blob/main/docs/database.md).
+runs it. See [database.md](/database).
 
 ## Decision 3 — background work is a durable queue, not a goroutine
 
@@ -211,8 +211,8 @@ wakes when something is due needs to wake often enough to notice.
 | [`gateways/vault`](https://github.com/certpilot/certpilot/blob/main/gateways/vault) | 9093 | A HashiCorp Vault PKI secrets engine |
 | [`gateways/selfsigned`](https://github.com/certpilot/certpilot/blob/main/gateways/selfsigned) | 9091 | Nothing. Signs locally, for development |
 
-See [gateways/vault.md](https://github.com/certpilot/certpilot/blob/main/docs/gateways/vault.md) and
-[writing-a-gateway.md](https://github.com/certpilot/certpilot/blob/main/docs/writing-a-gateway.md).
+See [gateways/vault.md](/gateways/vault) and
+[writing-a-gateway.md](/writing-a-gateway).
 
 ### Agent
 
@@ -222,7 +222,7 @@ signed HTTPS requests to the core's `/api/v1/agent/*` routes.
 
 The distinction that matters: **the agent generates its own private keys and
 never sends them anywhere.** CertPilot cannot produce them and does not claim
-to. See [agent.md](https://github.com/certpilot/certpilot/blob/main/docs/agent.md).
+to. See [agent.md](/agent).
 
 ## Inside the core
 
@@ -268,7 +268,7 @@ request
 ```
 
 Roles are read from `app_metadata` and never from `user_metadata`, which the
-user can write. See [security.md](https://github.com/certpilot/certpilot/blob/main/docs/security.md).
+user can write. See [security.md](/security).
 
 ## Data flow: a certificate from request to renewal
 

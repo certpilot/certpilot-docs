@@ -1,0 +1,40 @@
+[
+  {
+    "text": "Start here",
+    "items": [
+      { "text": "Getting started", "link": "/getting-started" },
+      { "text": "Architecture", "link": "/architecture" }
+    ]
+  },
+  {
+    "text": "What it does",
+    "items": [
+      { "text": "Discovery", "link": "/discovery" },
+      { "text": "Monitoring and alerting", "link": "/monitoring" },
+      { "text": "Deployment", "link": "/deployment" },
+      { "text": "The host agent", "link": "/agent" },
+      { "text": "Cryptographic posture", "link": "/posture" }
+    ]
+  },
+  {
+    "text": "Certificate authorities",
+    "items": [
+      { "text": "The Vault gateway", "link": "/gateways/vault" },
+      { "text": "Writing a gateway", "link": "/writing-a-gateway" }
+    ]
+  },
+  {
+    "text": "Running it",
+    "items": [
+      { "text": "Configuration", "link": "/configuration" },
+      { "text": "Operations", "link": "/operations" },
+      { "text": "Security model", "link": "/security" },
+      { "text": "Database", "link": "/database" },
+      { "text": "Troubleshooting", "link": "/troubleshooting" }
+    ]
+  },
+  {
+    "text": "Project",
+    "items": [{ "text": "Implementation status", "link": "/status" }]
+  }
+]

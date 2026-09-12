@@ -16,6 +16,9 @@
 import { withBase } from 'vitepress'
 import census from '../census-generated.json'
 import sections from '../sidebar-generated.json'
+// The same structure the sidebar is built from, so the two cannot disagree
+// about what the guide contains.
+import guide from '../guide-sidebar.json'
 
 // Widest method count, so the bars are proportional to each other rather than
 // each filling its own row.
@@ -28,20 +31,20 @@ const peak = Math.max(...census.methods.map((m) => m.count))
          than the empty half a centred hero leaves behind. -->
     <header class="hero">
       <div class="hero-copy">
-        <h1 class="hero-title">CertPilot REST API</h1>
+        <h1 class="hero-title">CertPilot</h1>
         <p class="hero-lede">
-          {{ census.routeCount }} endpoints across {{ census.sectionCount }} areas of the
-          control plane: certificate issuance and renewal, CA health, discovery,
-          deployment, and host agents. Each endpoint table gives the role required
-          to call it.
+          Open-source PKI and certificate lifecycle management. Discovery across
+          Certificate Transparency logs and hosts behind firewalls, renewals
+          deployed in declared waves and verified by handshake, and issuing CAs
+          watched on the same clock as everything they sign.
         </p>
         <div class="hero-actions">
-          <a class="act act-primary" :href="withBase('/api/')">Get started</a>
-          <!-- Second, not third. Somebody who has not met CertPilot before
-               cannot use an endpoint table yet, and this is the page that
+          <a class="act act-primary" :href="withBase('/getting-started')">Get started</a>
+          <!-- Before the endpoints, not after. Somebody who has not met
+               CertPilot cannot use a route table yet, and this is the page that
                tells them what the processes are. -->
           <a class="act" :href="withBase('/architecture')">How it works</a>
-          <a class="act" :href="withBase('/api/reference/dashboard')">Browse endpoints</a>
+          <a class="act" :href="withBase('/api/')">API reference</a>
         </div>
       </div>
 
@@ -66,7 +69,22 @@ const peak = Math.max(...census.methods.map((m) => m.count))
     </header>
 
     <!-- The directory. On a reference site the most useful thing the home page
-         can do is get out of the way and list what is actually here. -->
+         can do is get out of the way and list what is actually here. The guide
+         gets the same treatment rather than a row of cards describing it. -->
+    <section class="directory">
+      <h2 class="directory-head">The guide</h2>
+      <div class="guide-groups">
+        <div v-for="g in guide" :key="g.text" class="guide-group">
+          <h3 class="guide-head">{{ g.text }}</h3>
+          <ul class="guide-list">
+            <li v-for="i in g.items" :key="i.link">
+              <a :href="withBase(i.link)">{{ i.text }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <section class="directory">
       <h2 class="directory-head">Endpoint reference</h2>
       <ul class="directory-grid">
@@ -359,6 +377,41 @@ const peak = Math.max(...census.methods.map((m) => m.count))
 @media (max-width: 860px) {
   .home { padding: calc(var(--vp-nav-height) + 2rem) 1.25rem 4rem; }
   .hero { grid-template-columns: 1fr; gap: 2.5rem; }
+}
+
+.guide-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1.75rem 2rem;
+}
+
+.guide-head {
+  margin: 0 0 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vp-c-text-3);
+}
+
+.guide-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guide-list li + li {
+  margin-top: 0.35rem;
+}
+
+.guide-list a {
+  font-size: 0.9rem;
+  color: var(--vp-c-text-1);
+  text-decoration: none;
+}
+
+.guide-list a:hover {
+  color: var(--vp-c-brand-1);
 }
 
 @media (prefers-reduced-motion: reduce) {

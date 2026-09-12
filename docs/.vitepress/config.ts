@@ -5,15 +5,20 @@ import { defineConfig } from 'vitepress'
 // a code block full of arrow syntax.
 import { withMermaid } from 'vitepress-plugin-mermaid'
 import generated from './sidebar-generated.json' with { type: 'json' }
+// Shared with the home page, which lists the same groups. Two copies of this
+// structure would give the sidebar and the landing page different answers about
+// what the guide contains, and nothing would say which was right.
+import guide from './guide-sidebar.json' with { type: 'json' }
 
 const REPO = 'https://github.com/certpilot/certpilot-docs'
 const CODE = 'https://github.com/certpilot/certpilot'
 
 export default withMermaid(
   defineConfig({
-    title: 'CertPilot API',
+    title: 'CertPilot Docs',
     description:
-      'REST API reference for CertPilot — PKI and certificate lifecycle management.',
+      'Documentation for CertPilot — open-source PKI and certificate lifecycle ' +
+      'management. How it works, how to run it, and every endpoint.',
     lang: 'en-GB',
 
     // Project pages are served from a subpath. Getting this wrong produces a
@@ -46,12 +51,8 @@ export default withMermaid(
       outline: { level: [2, 3], label: 'On this page' },
 
       nav: [
-        {
-          text: 'Architecture',
-          link: '/architecture',
-          activeMatch: '^/architecture',
-        },
-        { text: 'Guide', link: '/api/', activeMatch: '^/api/(?!reference)' },
+        { text: 'Guide', link: '/getting-started', activeMatch: '^/(?!api/)' },
+        { text: 'API', link: '/api/', activeMatch: '^/api/(?!reference)' },
         {
           text: 'Endpoints',
           link: generated[0]?.link ?? '/api/',
@@ -60,49 +61,57 @@ export default withMermaid(
         { text: 'CertPilot', link: CODE },
       ],
 
-      sidebar: [
-        {
-          // Synced whole from the code repository. It is the only page here that
-          // is not about the API, and it is first because a reader who does not
-          // know what the processes are cannot use the rest of this.
-          text: 'How it works',
-          collapsed: false,
-          items: [{ text: 'Architecture', link: '/architecture' }],
-        },
-        {
-          text: 'Getting started',
-          collapsed: false,
-          items: [
-            { text: 'Overview', link: '/api/' },
-            { text: 'Authentication', link: '/api/authentication' },
-            { text: 'Roles and permissions', link: '/api/roles' },
-            { text: 'Conventions', link: '/api/conventions' },
-            { text: 'Errors', link: '/api/errors' },
-          ],
-        },
-        {
-          text: 'Live data',
-          collapsed: false,
-          items: [
-            { text: 'Event stream (SSE)', link: '/api/events' },
-            { text: 'Unattended screens', link: '/api/display-tokens' },
-          ],
-        },
-        {
-          text: 'Endpoint reference',
-          collapsed: false,
-          items: generated.map((s) => ({
-            text: `${s.text} (${s.count})`,
-            link: s.link,
-          })),
-        },
-        {
-          // Where every "returns a Certificate" in the tables above lands.
-          text: 'Schemas',
-          collapsed: false,
-          items: [{ text: 'Objects', link: '/api/reference/models' }],
-        },
-      ],
+      /*
+       * Two sidebars, keyed by path. The guide and the endpoint reference are
+       * read for different reasons and at different times, and a single list of
+       * forty entries makes both harder to use than either alone.
+       *
+       * The grouping is the code repository's own, from docs/README.md. It
+       * decided this information architecture already, and a second opinion
+       * here would only give the two places different answers.
+       */
+      sidebar: {
+        '/api/': [
+          {
+            text: 'Getting started',
+            collapsed: false,
+            items: [
+              { text: 'Overview', link: '/api/' },
+              { text: 'Authentication', link: '/api/authentication' },
+              { text: 'Roles and permissions', link: '/api/roles' },
+              { text: 'Conventions', link: '/api/conventions' },
+              { text: 'Errors', link: '/api/errors' },
+            ],
+          },
+          {
+            text: 'Live data',
+            collapsed: false,
+            items: [
+              { text: 'Event stream (SSE)', link: '/api/events' },
+              { text: 'Unattended screens', link: '/api/display-tokens' },
+            ],
+          },
+          {
+            text: 'Endpoint reference',
+            collapsed: false,
+            items: generated.map((s) => ({
+              text: `${s.text} (${s.count})`,
+              link: s.link,
+            })),
+          },
+          {
+            // Where every "returns a Certificate" in the tables above lands.
+            text: 'Schemas',
+            collapsed: false,
+            items: [{ text: 'Objects', link: '/api/reference/models' }],
+          },
+        ],
+
+        '/': guide.map((group) => ({
+          ...group,
+          collapsed: group.text === 'Project',
+        })),
+      },
 
       socialLinks: [{ icon: 'github', link: CODE }],
 
@@ -115,7 +124,7 @@ export default withMermaid(
 
       footer: {
         message: `Released under the <a href="${CODE}/blob/main/LICENSE">Apache 2.0 licence</a>.`,
-        copyright: `© 2026 CertPilot · Generated from <a href="${CODE}">core/api/router.go</a>`,
+        copyright: `© 2026 CertPilot · Synced from <a href="${CODE}">the CertPilot repository</a>`,
       },
     },
   }),
