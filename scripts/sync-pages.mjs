@@ -56,10 +56,66 @@ const PAGES = [
   { source: 'database.md', sentinel: '# Running CertPilot against a database' },
   { source: 'troubleshooting.md', sentinel: '# Troubleshooting' },
   { source: 'status.md', sentinel: '# Implementation status' },
+  { source: 'templates.md', sentinel: '# Certificate templates' },
+
+  // The platform pages. Their sentinels are the H1 rather than a section
+  // heading, because all nine share "## What CertPilot does" and a sentinel
+  // that matches nine files cannot detect the one thing a sentinel is for:
+  // getting a different page than the one asked for.
+  { source: 'platforms/README.md', sentinel: '# By platform' },
+  { source: 'platforms/nginx.md', sentinel: '# nginx' },
+  { source: 'platforms/apache.md', sentinel: '# Apache httpd' },
+  { source: 'platforms/haproxy.md', sentinel: '# HAProxy' },
+  { source: 'platforms/caddy.md', sentinel: '# Caddy' },
+  { source: 'platforms/tomcat.md', sentinel: '# Apache Tomcat' },
+  { source: 'platforms/postgresql.md', sentinel: '# PostgreSQL' },
+  { source: 'platforms/mariadb.md', sentinel: '# MariaDB and MySQL' },
+  { source: 'platforms/postfix.md', sentinel: '# Postfix' },
+  { source: 'platforms/dovecot.md', sentinel: '# Dovecot' },
 ]
 
-/** `security.md` -> `/security`, `gateways/vault.md` -> `/gateways/vault`. */
-const routeFor = (source) => '/' + source.replace(/\.md$/, '')
+/*
+ * Upstream pages this site deliberately does not publish.
+ *
+ * Every upstream .md must be in PAGES or in here, and the coverage check below
+ * fails the build otherwise. That rule exists because the alternative was in
+ * place for months and nobody noticed: PAGES is a hand-written list, a page
+ * added upstream was simply never mentioned again, and `--check` could not see
+ * it because it only ever verified that *listed* pages were current. Eleven
+ * pages were missing when this was written, including templates.md and the
+ * whole platforms/ section — all of it prose somebody wrote for readers who
+ * never got it.
+ *
+ * A silent omission in a generated asset is the same defect this repository has
+ * hit twice before. Opting a page out is now a line of code with a reason
+ * beside it.
+ */
+const UNPUBLISHED = new Map([
+  ['api-reference.md',
+    'split across the generated endpoint reference by sync-guides.mjs; ' +
+    'publishing it whole as well would give a reader two accounts of the same endpoint'],
+  ['README.md',
+    "the upstream index; this site has its own, and a directory listing of a " +
+    'repository is not a landing page'],
+])
+
+/**
+ * `security.md` -> `/security`, `gateways/vault.md` -> `/gateways/vault`, and
+ * `platforms/README.md` -> `/platforms/`.
+ *
+ * The README case matters: published as `/platforms/README` it would be a page
+ * whose URL says "README", and every link to `platforms/README.md` from a
+ * sibling page would have to know that. As a directory index it is the address
+ * people already guess.
+ */
+const routeFor = (source) =>
+  '/' + source.replace(/(^|\/)README\.md$/, '$1').replace(/\.md$/, '')
+
+/** Where a published page is written. `/platforms/` -> `docs/platforms/index.md`. */
+const fileFor = (source) => {
+  const route = routeFor(source)
+  return `docs${route.endsWith('/') ? route + 'index' : route}.md`
+}
 
 /** Every source path this run publishes, for deciding what stays internal. */
 const published = new Set(PAGES.map((p) => p.source))
@@ -113,6 +169,34 @@ function rewriteLink(target, fromSource) {
   return `${CODE_TREE}/${clean}${anchor}`
 }
 
+/*
+ * Stop Vue from eating a documented placeholder.
+ *
+ * VitePress compiles every page as a Vue template, so `{{ .Certificate }}` —
+ * which is a real thing the agent's install spec supports and which agent.md
+ * has to be able to print — is parsed as a JavaScript expression and fails the
+ * build with "Unexpected token". Fenced code blocks are safe already, because
+ * VitePress renders them with v-pre. Inline code and prose are not.
+ *
+ * So the mustaches that survive outside a fence are wrapped in v-pre, which is
+ * Vue's own way of saying "this is text". HTML-escaping them instead would be
+ * wrong in the place it matters most: inside backticks the entity would be
+ * shown literally, and a reader would copy `&#123;&#123; .Certificate }}` into
+ * their installs.json.
+ */
+function neutraliseMustaches(markdown) {
+  // Odd-numbered segments are inside a fence; leave those exactly as they are.
+  return markdown
+    .split(/(```[\s\S]*?```)/g)
+    .map((segment, i) => {
+      if (i % 2 === 1) return segment
+      return segment
+        .replace(/`([^`\n]*\{\{[^`\n]*)`/g, '<code v-pre>$1</code>')
+        .replace(/(^|[^>])(\{\{[^}\n]*\}\})/g, '$1<span v-pre>$2</span>')
+    })
+    .join('')
+}
+
 function rewriteLinks(markdown, fromSource) {
   return markdown.replace(
     /\]\(([^)\s]+)(\s+"[^"]*")?\)/g,
@@ -164,6 +248,100 @@ async function loadBinary(source) {
   return Buffer.from(await response.arrayBuffer())
 }
 
+/*
+ * Every upstream page is accounted for, or this fails.
+ *
+ * The check `--check` used to run compared the *published* pages against what
+ * is checked in here, which is a drift check with a hole in exactly the shape
+ * of new content: a page nobody listed was a page nobody could notice. This
+ * closes it from the other side — enumerate what upstream actually has, and
+ * insist every file is either published or opted out with a reason.
+ */
+async function upstreamPages() {
+  if (localDir) {
+    const walk = (dir, prefix = '') => {
+      const out = []
+      for (const entry of readdirSync(join(localDir, dir), { withFileTypes: true })) {
+        const rel = prefix ? `${prefix}/${entry.name}` : entry.name
+        if (entry.isDirectory()) out.push(...walk(join(dir, entry.name), rel))
+        else if (entry.name.endsWith('.md')) out.push(rel)
+      }
+      return out
+    }
+    return walk('.')
+  }
+
+  // The tree API rather than the contents API: one request for the whole
+  // repository instead of one per directory, and it does not miss a page in a
+  // subdirectory nobody thought to look in.
+  const url = 'https://api.github.com/repos/certpilot/certpilot/git/trees/main?recursive=1'
+  const headers = { accept: 'application/vnd.github+json' }
+  if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`
+  const response = await fetch(url, { headers })
+  if (!response.ok) {
+    console.error(`sync-pages: listing upstream returned ${response.status} — cannot verify coverage`)
+    process.exit(1)
+  }
+  const { tree, truncated } = await response.json()
+  if (truncated) {
+    console.error('sync-pages: the upstream tree listing was truncated, so coverage cannot be trusted')
+    process.exit(1)
+  }
+  return tree
+    .filter((n) => n.type === 'blob' && n.path.startsWith('docs/') && n.path.endsWith('.md'))
+    .map((n) => n.path.slice('docs/'.length))
+}
+
+const upstream = await upstreamPages()
+const unaccounted = upstream
+  .filter((source) => !published.has(source) && !UNPUBLISHED.has(source))
+  .sort()
+
+if (unaccounted.length) {
+  console.error(
+    'sync-pages: upstream has pages this site neither publishes nor opts out of:\n' +
+      unaccounted.map((s) => `  docs/${s}`).join('\n') +
+      '\n\nAdd each one to PAGES, or to UNPUBLISHED with the reason it stays behind.',
+  )
+  process.exit(1)
+}
+
+// And the other direction: a page listed here that upstream no longer has
+// would otherwise fail later, in a fetch, with a 404 that reads like an outage.
+const vanished = PAGES.map((p) => p.source).filter((s) => !upstream.includes(s))
+if (vanished.length) {
+  console.error(
+    'sync-pages: these are published here and no longer exist upstream:\n' +
+      vanished.map((s) => `  docs/${s}`).join('\n'),
+  )
+  process.exit(1)
+}
+
+/*
+ * And the third way a page can fail to reach anybody: published, current, and
+ * in no sidebar. Search and inbound links would still find it; nobody browsing
+ * would. The sidebar is hand-ordered on purpose — a generated one would be
+ * alphabetical, and "Apache Tomcat" does not belong between "Apache httpd" and
+ * "Caddy" just because of how it is spelled — so the list is written by a
+ * person and checked by this.
+ */
+const navLinks = new Set(
+  JSON.parse(readFileSync(join(root, 'docs/.vitepress/guide-sidebar.json'), 'utf8'))
+    .flatMap((group) => group.items.map((item) => item.link)),
+)
+const unreachable = PAGES
+  .map((p) => routeFor(p.source))
+  .filter((route) => !navLinks.has(route))
+
+if (unreachable.length) {
+  console.error(
+    'sync-pages: these pages are published and in no sidebar, so nobody browsing will find them:\n' +
+      unreachable.map((r) => `  ${r}`).join('\n') +
+      '\n\nAdd each to docs/.vitepress/guide-sidebar.json.',
+  )
+  process.exit(1)
+}
+
 const nextPages = new Map()
 const wantedImages = new Set()
 
@@ -182,7 +360,7 @@ for (const page of PAGES) {
     wantedImages.add(target)
   }
 
-  const body = rewriteLinks(markdown, page.source)
+  const body = neutraliseMustaches(rewriteLinks(markdown, page.source))
 
   const unresolved = unresolvedLinks(body)
   if (unresolved.length) {
@@ -194,7 +372,7 @@ for (const page of PAGES) {
   }
 
   nextPages.set(
-    `docs${routeFor(page.source)}.md`,
+    fileFor(page.source),
     // editLink is switched off per page rather than globally: the button would
     // otherwise offer to edit this vendored copy, and that edit would be
     // overwritten by the next sync without anybody being told.

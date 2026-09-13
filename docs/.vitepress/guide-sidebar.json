@@ -7,11 +7,27 @@
     ]
   },
   {
+    "text": "By platform",
+    "items": [
+      { "text": "Overview", "link": "/platforms/" },
+      { "text": "nginx", "link": "/platforms/nginx" },
+      { "text": "Apache httpd", "link": "/platforms/apache" },
+      { "text": "HAProxy", "link": "/platforms/haproxy" },
+      { "text": "Caddy", "link": "/platforms/caddy" },
+      { "text": "Apache Tomcat", "link": "/platforms/tomcat" },
+      { "text": "PostgreSQL", "link": "/platforms/postgresql" },
+      { "text": "MariaDB and MySQL", "link": "/platforms/mariadb" },
+      { "text": "Postfix", "link": "/platforms/postfix" },
+      { "text": "Dovecot", "link": "/platforms/dovecot" }
+    ]
+  },
+  {
     "text": "What it does",
     "items": [
       { "text": "Discovery", "link": "/discovery" },
       { "text": "Monitoring and alerting", "link": "/monitoring" },
       { "text": "Deployment", "link": "/deployment" },
+      { "text": "Certificate templates", "link": "/templates" },
       { "text": "The host agent", "link": "/agent" },
       { "text": "Cryptographic posture", "link": "/posture" }
     ]
