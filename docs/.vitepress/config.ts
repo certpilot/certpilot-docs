@@ -32,6 +32,27 @@ export default withMermaid(
     // that does not exist, so it fails the build rather than shipping.
     ignoreDeadLinks: false,
 
+    markdown: {
+      /*
+       * Languages the upstream prose fences with that Shiki has never heard of.
+       *
+       * Without this the build prints "the language 'caddyfile' is not loaded"
+       * on every run. It still renders — it falls back to plain text — so the
+       * only thing the warning achieves is teaching whoever reads this build
+       * log that warnings here are normal, which is the last thing a build log
+       * should teach anybody.
+       *
+       * nginx rather than plain text, and not by preference: `text` and
+       * `plaintext` are both rejected as alias targets — the alias has to name
+       * a grammar Shiki will actually load. nginx is the closest one that
+       * exists. Braces, a directive, its arguments, and `#` comments are the
+       * same shape in both, which is most of a Caddyfile.
+       */
+      languageAlias: {
+        caddyfile: 'nginx',
+      },
+    },
+
     head: [
       // `base` is not applied to head entries the way it is to theme assets, so
       // this path carries the subpath itself. Without it the icon 404s on the

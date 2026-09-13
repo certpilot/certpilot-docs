@@ -2,9 +2,18 @@ name: Sync routes, guides and pages
 
 # The docs repo vendors routes.json, the guide prose and the architecture page
 # so that its build needs no Go toolchain and no checkout of the code.
-# The cost of vendoring is drift, so this closes the gap on a schedule rather
-# than relying on somebody remembering after they merge a new endpoint.
+# The cost of vendoring is drift, so this closes the gap.
+#
+# Three triggers, and the first one is the important one. A weekly cron alone
+# meant a documentation change merged upstream on a Tuesday reached readers the
+# following Monday at the earliest — and only then if somebody merged the pull
+# request it opened. `repository_dispatch` closes that to minutes: the code
+# repository tells this one when docs/ changes. The cron stays as the safety
+# net for a dispatch that never arrives, which is a thing that happens when a
+# token expires and nothing says so.
 on:
+  repository_dispatch:
+    types: [upstream-docs-changed]
   schedule:
     - cron: '0 6 * * 1'
   workflow_dispatch:
@@ -24,19 +33,61 @@ jobs:
           cache: npm
       - run: npm ci
 
+      # Pages first, and on their own, because they are handled differently
+      # from the two below.
+      - name: Sync whole pages
+        env:
+          # sync-pages lists the upstream tree to check that every page is
+          # either published or deliberately opted out. Unauthenticated that
+          # request is rate-limited per runner IP, which fails in a way that
+          # looks like the check itself is broken.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run sync:pages
+
+      - name: Did the pages change
+        id: pages
+        run: |
+          if git diff --quiet -- docs/; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git --no-pager diff --stat -- docs/
+          fi
+
+      # A page arrives here as prose somebody already wrote and already had
+      # reviewed, in the repository it was written in. Holding it behind a
+      # second review in this one buys nothing and costs the delay this
+      # workflow exists to remove — so pages go straight to main, which is what
+      # deploy.yml watches.
+      #
+      # The build runs first. Pushing to main publishes without CI, since
+      # ci.yml only runs on pull requests, and a page that breaks the build
+      # would otherwise take the site down until somebody noticed.
+      - name: Prove it still builds
+        if: steps.pages.outputs.changed == 'true'
+        run: npm run build
+
+      - name: Publish the pages
+        if: steps.pages.outputs.changed == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add docs/
+          git commit -m 'Sync the pages from CertPilot'
+          git push
+
+      # Routes and guides are different, and get a pull request. A new endpoint
+      # usually needs a sentence of prose that a generator cannot write, and
+      # opening a pull request is what creates the moment to write it.
       - run: npm run sync
       - run: npm run sync:guides
-      - run: npm run sync:pages
 
-      # A pull request rather than a push: a new endpoint usually needs a
-      # sentence of prose that a generator cannot write, and opening a PR is
-      # what creates the moment to write it.
       - uses: peter-evans/create-pull-request@v7
         with:
-          commit-message: 'chore: refresh routes.json, guides and pages from CertPilot'
+          commit-message: 'chore: refresh routes.json and the guides from CertPilot'
           branch: sync/upstream
           delete-branch: true
-          title: 'Refresh the route table, guides and pages from CertPilot'
+          title: 'Refresh the route table and guides from CertPilot'
           body: |
             `routes.json` has drifted from `core/api/router.go`.
 
@@ -44,3 +95,6 @@ jobs:
             automatically. Check whether any new route needs prose — the
             generator carries the router's comments through, but a route with
             no comment arrives here with no explanation.
+
+            Whole pages are not in here: those go straight to `main`, because
+            they arrive as prose that was already written and reviewed upstream.
