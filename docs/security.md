@@ -295,7 +295,7 @@ Constraints, none of them configurable:
 
 ### Agent signatures
 
-Ed25519 over a canonical string, in [`pkg/agentauth`](https://github.com/certpilot/certpilot/blob/main/pkg/agentauth):
+Ed25519 over a canonical string, in [`certpilot-agent-sdk/agentauth`](https://github.com/certpilot/certpilot-agent-sdk/tree/main/agentauth):
 
 ```
 certpilot-agent-v1

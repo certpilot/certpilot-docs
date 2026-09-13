@@ -1,6 +1,6 @@
 {
-  "routeCount": 121,
-  "sectionCount": 21,
+  "routeCount": 126,
+  "sectionCount": 22,
   "roles": [
     "viewer",
     "auditor",
@@ -10,11 +10,11 @@
   "methods": [
     {
       "method": "GET",
-      "count": 47
+      "count": 49
     },
     {
       "method": "POST",
-      "count": 45
+      "count": 46
     },
     {
       "method": "PATCH",
@@ -22,16 +22,16 @@
     },
     {
       "method": "PUT",
-      "count": 9
+      "count": 10
     },
     {
       "method": "DELETE",
-      "count": 18
+      "count": 19
     }
   ],
-  "displayTokenReadable": 39,
-  "documentedBodies": 40,
-  "modelCount": 30,
+  "displayTokenReadable": 41,
+  "documentedBodies": 42,
+  "modelCount": 31,
   "source": "core/api/router.go",
   "sections": [
     {
@@ -109,6 +109,10 @@
     {
       "text": "Audit record integrity",
       "count": 1
+    },
+    {
+      "text": "Certificate templates",
+      "count": 5
     },
     {
       "text": "Sign-in discovery",

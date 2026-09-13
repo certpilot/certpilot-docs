@@ -60,7 +60,7 @@ Everything below follows from three decisions.
 ## Decision 1 — a gateway is a process, not a package
 
 The core knows nothing about ACME, Vault, or any specific CA. It knows one gRPC
-contract, [`proto/provider/v1/provider.proto`](https://github.com/certpilot/certpilot/blob/main/proto/provider/v1/provider.proto),
+contract, [`provider.proto`](https://github.com/certpilot/certpilot-gateway-sdk/blob/main/proto/provider/v1/provider.proto),
 and it dials processes that implement it.
 
 This costs a network hop on every issuance. It buys four things:
@@ -207,9 +207,9 @@ wakes when something is due needs to wake often enough to notice.
 
 | Gateway | Port | Talks to |
 |:---|:---|:---|
-| [`gateways/acme`](https://github.com/certpilot/certpilot/blob/main/gateways/acme) | 9092 | Any RFC 8555 CA — Let's Encrypt, ZeroSSL, BuyPass, Google Trust Services, step-ca |
-| [`gateways/vault`](https://github.com/certpilot/certpilot/blob/main/gateways/vault) | 9093 | A HashiCorp Vault PKI secrets engine |
-| [`gateways/selfsigned`](https://github.com/certpilot/certpilot/blob/main/gateways/selfsigned) | 9091 | Nothing. Signs locally, for development |
+| [`certpilot-gateway-acme`](https://github.com/certpilot/certpilot-gateway-acme) | 9092 | Any RFC 8555 CA — Let's Encrypt, ZeroSSL, BuyPass, Google Trust Services, step-ca |
+| [`certpilot-gateway-vault`](https://github.com/certpilot/certpilot-gateway-vault) | 9093 | A HashiCorp Vault PKI secrets engine |
+| [`certpilot-gateway-selfsigned`](https://github.com/certpilot/certpilot-gateway-selfsigned) | 9091 | Nothing. Signs locally, for development |
 
 See [gateways/vault.md](/gateways/vault) and
 [writing-a-gateway.md](/writing-a-gateway).
@@ -377,20 +377,31 @@ wrong about something that is working perfectly.
 
 ## Modules
 
-A Go workspace with six modules:
+A Go workspace with three modules:
 
 ```
-pkg/                shared: config, crypto, x509util, secrets, grpckit,
-                    agentapi, agentauth, webhooksig, generated protobuf
+pkg/                shared, and only what is genuinely shared:
+                    config, secrets, passwords, revocation, webhooksig
 core/               the control plane
 agent/              the host agent
-gateways/acme/      ACME gateway
-gateways/selfsigned/ development gateway
-gateways/vault/     Vault gateway
 ```
 
 `go build ./...` from the repository root does not work — it is a workspace,
 not a module. Build from inside a module, or use the `make` targets.
+
+`pkg/` used to hold `crypto`, `x509util`, `grpckit`, the generated protobuf,
+`agentapi` and `agentauth` as well. Those were never "shared code" — they were
+two contracts wearing the same name as a utility drawer, and both are now
+published separately:
+
+| | |
+|:---|:---|
+| [`certpilot-gateway-sdk`](https://github.com/certpilot/certpilot-gateway-sdk) | `provider.v1`, `grpckit`, `x509util`, `crypto`, and the `.proto` they are generated from |
+| [`certpilot-agent-sdk`](https://github.com/certpilot/certpilot-agent-sdk) | `agentapi`, `agentauth`, and `SIGNING.md` — the signing scheme specified independently of the Go |
+
+The core depends on both as ordinary modules, with no `replace` directive, which
+is the property that proves they were published rather than copied. The three
+gateways do the same from their own repositories.
 
 The split is not ceremony. `agent` must be able to build and ship without the
 core's dependency tree: it runs on other people's servers, and every dependency

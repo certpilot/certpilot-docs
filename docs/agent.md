@@ -110,32 +110,45 @@ does not then get backed up to somebody's home directory by accident.
 An agent cannot ask for whatever it likes. An operator writes a grant first,
 and the grant is checked on every request.
 
+A grant says **who may ask, and for which names**. What the certificate looks
+like — the issuer, the key rules, the lifetime — lives on the
+[certificate template](https://github.com/certpilot/certpilot/blob/main/docs/templates.md) the grant names.
+
 ```bash
 curl -X POST localhost:8080/api/v1/agent-grants -H 'Content-Type: application/json' -d '{
   "name": "web tier certificates",
+  "template_id": "host-workloads",
   "label_selector": {"tier": "web"},
-  "names": ["*.web.example.com", "api.example.com"],
-  "ca_account_id": "<id>",
-  "allowed_key_types": ["ECDSA"],
-  "min_key_size": 256,
-  "validity_days": 90,
-  "renew_before_days": 30
+  "names": ["*.web.example.com", "api.example.com"]
 }'
 ```
 
 | Field | |
 |:---|:---|
+| `template_id` | The template this grant is permission for, by slug or uuid. **Required** |
+| `subject_kind` | `AGENT` (the default), or `ROLE`, `TEAM`, `USER` for a person's request |
 | `agent_id` | Targets one host |
 | `label_selector` | Targets every agent carrying these labels. Either this or `agent_id` |
-| `names` | Exact hostnames, or single-level wildcards |
-| `ca_account_id` | **Part of the grant, not chosen by the agent.** An agent that could pick its own issuer could pick the cheapest, the least logged, or the one with the widest trust |
-| `allowed_key_types`, `min_key_size` | What the host may generate |
-| `validity_days` | How long the certificate is asked for |
-| `renew_before_days` | Becomes `renew_after` in the response — **the core decides when**, not the host |
+| `names` | Exact hostnames, or single-level wildcards. A **narrowing** of what the template permits, never an exception to it |
 
-That last row matters more than it looks. A fleet that picked its own renewal
-moment is a fleet that can decide to renew hourly, and four hundred hosts doing
-that is a denial of service against your CA.
+### Why the shape is not on the grant
+
+It used to be. `ca_account_id`, `allowed_key_types`, `min_key_size`,
+`validity_days` and `renew_before_days` were columns here, and that made them a
+second rulebook — narrower than `policies`, reachable only by agents, and
+maintained separately. The result was that a `BLOCK` policy an operator wrote
+stopped somebody in the console and did not stop a host.
+
+Now both paths go through one resolver, so the same template rules and the same
+estate-wide floor apply to a host as to a person. Migration 038 converted every
+existing grant into a template carrying its exact rules, so nothing an agent
+could request before is refused now.
+
+`renew_before_days` moved to the template and still does the same job: it
+becomes `renew_after` in the response, and **the core decides when**, not the
+host. A fleet that picked its own renewal moment is a fleet that can decide to
+renew hourly, and four hundred hosts doing that is a denial of service against
+your CA.
 
 A refused request is recorded and raises `agent.request_refused`. An agent
 asking for a name it has no grant for is a signal, not a nuisance.
@@ -204,6 +217,55 @@ Postgres actually reads it, and reloading, is the point.
   ]
 }
 ```
+
+### Keystores, for anything on the JVM
+
+A JVM reads a keystore, not a pair of PEM files, so a Tomcat, Jetty, Kafka or
+Elasticsearch estate was invisible to this agent until it could write one.
+
+```json
+{
+  "name": "tomcat",
+  "certificate": "app.example.com",
+  "format": "PKCS12",
+  "cert_path": "/opt/tomcat/conf/keystore.p12",
+  "keystore_password_file": "/opt/tomcat/conf/keystore.pass",
+  "key_mode": "0600",
+  "check": ["/opt/tomcat/bin/configtest.sh"],
+  "reload": ["/bin/systemctl", "reload", "tomcat"]
+}
+```
+
+`cert_path` is the keystore, and `key_path` must be omitted — the key is inside
+it, and naming a second path would write it to disk in the clear as well.
+`chain_path` does not apply either: the chain is stored as CA certificates,
+which is what a consumer asking the keystore for a chain expects. Everything
+else works exactly as it does for PEM — the mode, the ownership, the check
+before the reload, and the rollback from a captured copy if the reload fails.
+
+**PKCS#12 and not JKS.** Java 9 made PKCS#12 the default keystore type and every
+JDK since reads it natively, so this covers the modern JVM and the `.pfx` that
+Windows tooling and several appliances want. JKS is for an estate still on
+Java 8 and is not written by this build.
+
+#### About that password
+
+It is **not protecting the key from anyone**. The private key is already on this
+host — this agent generated it there — and whoever can read the keystore can
+read whatever else is in that directory.
+
+What it is, is a coordination value. Tomcat has it in `server.xml`, and the
+keystore will not open unless the two match. Which is why there is no default:
+`changeit` is what every Java tutorial uses, and defaulting to it would look
+like protection while being none.
+
+Give it as `keystore_password` inline, or `keystore_password_file` pointing at a
+file — the second exists so an operator who already keeps it in one for their
+application does not have to copy it into a second place. Exactly one, and
+omitting both is refused when the spec is read rather than when the install
+runs.
+
+---
 
 ```bash
 certpilot-agent install            # writes what has changed, checks, reloads

@@ -95,6 +95,11 @@
     "count": 1
   },
   {
+    "text": "Certificate templates",
+    "link": "/api/reference/certificate-templates",
+    "count": 5
+  },
+  {
     "text": "Sign-in discovery",
     "link": "/api/reference/sign-in-discovery",
     "count": 3
