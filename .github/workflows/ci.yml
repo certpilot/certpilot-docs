@@ -31,4 +31,11 @@ jobs:
       # who does not yet know what CertPilot is arrives on, so a stale one is
       # wrong in front of exactly the audience least able to notice.
       - name: Verify the vendored pages are current
+        env:
+          # This check now also lists the upstream tree, to catch a page that
+          # exists there and is published nowhere here. Unauthenticated, that
+          # request shares a 60-an-hour budget with every other job on the same
+          # runner IP, and the failure arrives looking like the check is broken
+          # rather than like a rate limit.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run sync:pages -- --check
