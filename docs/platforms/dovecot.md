@@ -2,7 +2,7 @@
 editLink: false
 ---
 
-<!-- Synced from docs/platforms/dovecot.md in the CertPilot repository by
+<!-- Synced from docs/platforms/dovecot.md in certpilot/certpilot-agent by
      scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Dovecot
