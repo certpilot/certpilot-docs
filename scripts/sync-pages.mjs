@@ -104,7 +104,11 @@ const PAGES = [
   { source: 'posture.md', sentinel: '# Cryptographic posture' },
   { source: 'gateways/vault.md', sentinel: '# The Vault gateway' },
   { source: 'writing-a-gateway.md', sentinel: '# Writing a gateway' },
-  { source: 'compatibility.md', sentinel: '# Gateway compatibility' },
+  // Not a heading, unlike every other sentinel here. That page's H1 changed
+  // when the agent's rows joined the gateway rows on it, and a sentinel that
+  // only matches the new H1 would mean this repository and the core's had to
+  // merge in the same instant. The table header is in both.
+  { source: 'compatibility.md', sentinel: '| Gateway | Version | Contract |' },
   { source: 'repositories.md', sentinel: '# Repositories' },
   { source: 'configuration.md', sentinel: '# Configuration reference' },
   { source: 'operations.md', sentinel: '# Operations' },
