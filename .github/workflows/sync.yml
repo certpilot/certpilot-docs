@@ -42,6 +42,15 @@ jobs:
           # request is rate-limited per runner IP, which fails in a way that
           # looks like the check itself is broken.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The commit that triggered this, when one did.
+          #
+          # raw.githubusercontent.com is CDN-cached, and a dispatch arrives
+          # faster than the cache settles. The first run of this pipeline
+          # fetched nine rewritten pages correctly and the tenth from a stale
+          # edge, published the mixture, and reported success — a site
+          # inconsistent with itself and no failure anywhere. Pinning to the
+          # SHA removes the race: that URL's content cannot change.
+          CERTPILOT_REF: ${{ github.event.client_payload.sha }}
         run: npm run sync:pages
 
       - name: Did the pages change
@@ -80,7 +89,11 @@ jobs:
       # usually needs a sentence of prose that a generator cannot write, and
       # opening a pull request is what creates the moment to write it.
       - run: npm run sync
+        env:
+          CERTPILOT_REF: ${{ github.event.client_payload.sha }}
       - run: npm run sync:guides
+        env:
+          CERTPILOT_REF: ${{ github.event.client_payload.sha }}
 
       - uses: peter-evans/create-pull-request@v7
         with:

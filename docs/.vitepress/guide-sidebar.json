@@ -7,9 +7,9 @@
     ]
   },
   {
-    "text": "By platform",
+    "text": "Supported platforms",
     "items": [
-      { "text": "Overview", "link": "/platforms/" },
+      { "text": "All platforms", "link": "/platforms/" },
       { "text": "nginx", "link": "/platforms/nginx" },
       { "text": "Apache httpd", "link": "/platforms/apache" },
       { "text": "HAProxy", "link": "/platforms/haproxy" },

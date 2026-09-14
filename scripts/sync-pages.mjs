@@ -22,7 +22,27 @@ import { fileURLToPath } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 
-const RAW = 'https://raw.githubusercontent.com/certpilot/certpilot/main/docs'
+/*
+ * Which commit to read, and why it is not always "main".
+ *
+ * raw.githubusercontent.com is served through a CDN with its own cache, so a
+ * request for the main branch immediately after a merge can return the content
+ * from before it. That is not theoretical: the first dispatch-triggered sync
+ * after this pipeline was built fetched nine rewritten pages correctly and the
+ * tenth from a stale edge, published the mixture, and reported success. The
+ * result was a site that was internally inconsistent with no failure anywhere.
+ *
+ * The dispatch carries the commit that triggered it, so CERTPILOT_REF pins
+ * every request to that SHA. A SHA-addressed URL cannot go stale, because the
+ * content behind it never changes. Falling back to main keeps the scheduled
+ * run and a local run working, where there is no dispatch and the cache has
+ * had time to settle anyway.
+ */
+const REF = process.env.CERTPILOT_REF || 'main'
+
+const RAW = `https://raw.githubusercontent.com/certpilot/certpilot/${REF}/docs`
+// The code links stay on main: they are for a reader following a reference to
+// the source, who wants the current file rather than the one at a past commit.
 const CODE_TREE = 'https://github.com/certpilot/certpilot/blob/main'
 
 const localDir = process.env.CERTPILOT_DOCS_DIR
@@ -62,7 +82,7 @@ const PAGES = [
   // heading, because all nine share "## What CertPilot does" and a sentinel
   // that matches nine files cannot detect the one thing a sentinel is for:
   // getting a different page than the one asked for.
-  { source: 'platforms/README.md', sentinel: '# By platform' },
+  { source: 'platforms/README.md', sentinel: '# Supported platforms' },
   { source: 'platforms/nginx.md', sentinel: '# nginx' },
   { source: 'platforms/apache.md', sentinel: '# Apache httpd' },
   { source: 'platforms/haproxy.md', sentinel: '# HAProxy' },
@@ -274,7 +294,7 @@ async function upstreamPages() {
   // The tree API rather than the contents API: one request for the whole
   // repository instead of one per directory, and it does not miss a page in a
   // subdirectory nobody thought to look in.
-  const url = 'https://api.github.com/repos/certpilot/certpilot/git/trees/main?recursive=1'
+  const url = `https://api.github.com/repos/certpilot/certpilot/git/trees/${REF}?recursive=1`
   const headers = { accept: 'application/vnd.github+json' }
   if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`
   const response = await fetch(url, { headers })
