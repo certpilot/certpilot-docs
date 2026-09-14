@@ -62,7 +62,7 @@ const PAGES = [
   // heading, because all nine share "## What CertPilot does" and a sentinel
   // that matches nine files cannot detect the one thing a sentinel is for:
   // getting a different page than the one asked for.
-  { source: 'platforms/README.md', sentinel: '# By platform' },
+  { source: 'platforms/README.md', sentinel: '# Supported platforms' },
   { source: 'platforms/nginx.md', sentinel: '# nginx' },
   { source: 'platforms/apache.md', sentinel: '# Apache httpd' },
   { source: 'platforms/haproxy.md', sentinel: '# HAProxy' },
