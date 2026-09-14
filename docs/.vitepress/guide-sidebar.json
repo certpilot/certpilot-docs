@@ -36,7 +36,8 @@
     "text": "Certificate authorities",
     "items": [
       { "text": "The Vault gateway", "link": "/gateways/vault" },
-      { "text": "Writing a gateway", "link": "/writing-a-gateway" }
+      { "text": "Writing a gateway", "link": "/writing-a-gateway" },
+      { "text": "Gateway compatibility", "link": "/compatibility" }
     ]
   },
   {
@@ -51,6 +52,9 @@
   },
   {
     "text": "Project",
-    "items": [{ "text": "Implementation status", "link": "/status" }]
+    "items": [
+      { "text": "Implementation status", "link": "/status" },
+      { "text": "Repositories", "link": "/repositories" }
+    ]
   }
 ]
