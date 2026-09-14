@@ -70,6 +70,8 @@ const PAGES = [
   { source: 'posture.md', sentinel: '# Cryptographic posture' },
   { source: 'gateways/vault.md', sentinel: '# The Vault gateway' },
   { source: 'writing-a-gateway.md', sentinel: '# Writing a gateway' },
+  { source: 'compatibility.md', sentinel: '# Gateway compatibility' },
+  { source: 'repositories.md', sentinel: '# Repositories' },
   { source: 'configuration.md', sentinel: '# Configuration reference' },
   { source: 'operations.md', sentinel: '# Operations' },
   { source: 'security.md', sentinel: '# Security model' },
