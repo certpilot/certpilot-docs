@@ -44,7 +44,8 @@ jobs:
           # request is rate-limited per runner IP, which fails in a way that
           # looks like the check itself is broken.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # The commit that triggered this, when one did.
+          # The commit that triggered this, when one did, pinned on the
+          # repository it came from.
           #
           # raw.githubusercontent.com is CDN-cached, and a dispatch arrives
           # faster than the cache settles. The first run of this pipeline
@@ -52,7 +53,16 @@ jobs:
           # edge, published the mixture, and reported success — a site
           # inconsistent with itself and no failure anywhere. Pinning to the
           # SHA removes the race: that URL's content cannot change.
-          CERTPILOT_REF: ${{ github.event.client_payload.sha }}
+          #
+          # Only the repository that dispatched is pinned. The other one did not
+          # just merge anything, so it has no cache race to avoid and its
+          # readers should get main.
+          #
+          # An older dispatch carries no `repo` at all — the core's workflow
+          # sent only a SHA before the agent's pages moved. That falls through
+          # to the core, which is what it meant.
+          CERTPILOT_REF: ${{ github.event.client_payload.repo == 'certpilot-agent' && 'main' || github.event.client_payload.sha }}
+          CERTPILOT_AGENT_REF: ${{ github.event.client_payload.repo == 'certpilot-agent' && github.event.client_payload.sha || 'main' }}
         run: npm run sync:pages
 
       - name: Did the pages change
@@ -80,11 +90,16 @@ jobs:
 
       - name: Publish the pages
         if: steps.pages.outputs.changed == 'true'
+        env:
+          FROM: ${{ github.event.client_payload.repo || 'certpilot' }}
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git add docs/
-          git commit -m 'Sync the pages from CertPilot'
+          # Which repository this came from. The pages are published from more
+          # than one now, and a log of identical commit messages is no help to
+          # whoever is working out where a page changed.
+          git commit -m "Sync the pages from $FROM"
           git push
 
       # Asked for, rather than assumed to follow from the push.

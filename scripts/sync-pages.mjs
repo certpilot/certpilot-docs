@@ -1,18 +1,25 @@
-// Publish whole pages, and their screenshots, from the CertPilot repository.
+// Publish whole pages, and their screenshots, from the CertPilot repositories.
 //
-// The code repository carries about four thousand lines of documentation that
-// were readable only by somebody who had already cloned it — precisely the
-// audience that needs them least. This publishes them without moving them:
-// prose about the system that lives beside the system gets updated by the
-// person changing it, and prose that lives in a different repository does not.
+// The code carries about four thousand lines of documentation that were
+// readable only by somebody who had already cloned it — precisely the audience
+// that needs them least. This publishes them without moving them: prose about
+// the system that lives beside the system gets updated by the person changing
+// it, and prose that lives in a different repository does not.
+//
+// Which is why there is more than one upstream. The host agent moved to
+// certpilot-agent, and its pages went with it — the same principle applied to
+// a repository split rather than abandoned because of one. So this reads from
+// several repositories into one site: a page's *source path* is its identity
+// here, and which repository it comes from is a property of the page.
 //
 // Same vendoring trade as routes.json and the guides: the docs build must not
 // need a checkout of the code, so the result is committed here and this script
 // closes the gap. `--check` is what CI runs.
 //
-//   node scripts/sync-pages.mjs                 # fetch from the default branch
+//   node scripts/sync-pages.mjs                 # fetch from each default branch
 //   node scripts/sync-pages.mjs --check         # exit 1 if it would change
-//   CERTPILOT_DOCS_DIR=../certpilot/docs node scripts/sync-pages.mjs
+//   CERTPILOT_DOCS_DIR=../certpilot/docs \
+//     CERTPILOT_AGENT_DOCS_DIR=../certpilot-agent/docs node scripts/sync-pages.mjs
 
 import {
   readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, rmSync,
@@ -32,20 +39,41 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..')
  * tenth from a stale edge, published the mixture, and reported success. The
  * result was a site that was internally inconsistent with no failure anywhere.
  *
- * The dispatch carries the commit that triggered it, so CERTPILOT_REF pins
- * every request to that SHA. A SHA-addressed URL cannot go stale, because the
- * content behind it never changes. Falling back to main keeps the scheduled
- * run and a local run working, where there is no dispatch and the cache has
- * had time to settle anyway.
+ * The dispatch carries the commit that triggered it, so the ref pins every
+ * request to that SHA. A SHA-addressed URL cannot go stale, because the content
+ * behind it never changes. Falling back to main keeps the scheduled run and a
+ * local run working, where there is no dispatch and the cache has had time to
+ * settle anyway.
+ *
+ * Only the repository that dispatched is pinned. The other one had no merge
+ * just now, so there is no cache race to avoid there and main is what its
+ * readers should get.
  */
-const REF = process.env.CERTPILOT_REF || 'main'
+const CORE = 'certpilot/certpilot'
+const AGENT = 'certpilot/certpilot-agent'
 
-const RAW = `https://raw.githubusercontent.com/certpilot/certpilot/${REF}/docs`
+const UPSTREAMS = {
+  [CORE]: {
+    ref: process.env.CERTPILOT_REF || 'main',
+    localDir: process.env.CERTPILOT_DOCS_DIR,
+  },
+  [AGENT]: {
+    ref: process.env.CERTPILOT_AGENT_REF || 'main',
+    localDir: process.env.CERTPILOT_AGENT_DOCS_DIR,
+  },
+}
+
+/** Where a page's markdown is fetched from. */
+const rawBase = (repo) =>
+  `https://raw.githubusercontent.com/${repo}/${UPSTREAMS[repo].ref}/docs`
+
 // The code links stay on main: they are for a reader following a reference to
 // the source, who wants the current file rather than the one at a past commit.
-const CODE_TREE = 'https://github.com/certpilot/certpilot/blob/main'
+// Per repository, because a link out of an agent page means a file in the
+// agent's repository — pointing it at the core would be a 404 that looks like
+// a working link.
+const codeTree = (repo) => `https://github.com/${repo}/blob/main`
 
-const localDir = process.env.CERTPILOT_DOCS_DIR
 const check = process.argv.includes('--check')
 
 /*
@@ -59,6 +87,12 @@ const check = process.argv.includes('--check')
  * into per-resource fragments that sit beside the generated route tables, and
  * importing it whole as well would give a reader two accounts of the same
  * endpoint with no way to tell which is current.
+ *
+ * `repo` says which repository the page is read from, and defaults to the core.
+ * The source path is unaffected by it: `platforms/iis.md` is that page's
+ * identity on this site whichever repository holds it, which is what lets a
+ * page move between repositories without its URL changing or every link to it
+ * needing an edit.
  */
 const PAGES = [
   { source: 'getting-started.md', sentinel: '## 1. Generate development keys' },
@@ -66,7 +100,7 @@ const PAGES = [
   { source: 'discovery.md', sentinel: '## Certificate Transparency' },
   { source: 'monitoring.md', sentinel: '## Expiry thresholds' },
   { source: 'deployment.md', sentinel: '## Rollout order' },
-  { source: 'agent.md', sentinel: '## Enrolment' },
+  { source: 'agent.md', sentinel: '## Enrolment', repo: AGENT },
   { source: 'posture.md', sentinel: '# Cryptographic posture' },
   { source: 'gateways/vault.md', sentinel: '# The Vault gateway' },
   { source: 'writing-a-gateway.md', sentinel: '# Writing a gateway' },
@@ -84,18 +118,18 @@ const PAGES = [
   // heading, because the Linux ones all share "## What CertPilot does" and a
   // sentinel that matches nine files cannot detect the one thing a sentinel is
   // for: getting a different page than the one asked for.
-  { source: 'platforms/README.md', sentinel: '# Supported platforms' },
-  { source: 'platforms/nginx.md', sentinel: '# nginx' },
-  { source: 'platforms/apache.md', sentinel: '# Apache httpd' },
-  { source: 'platforms/haproxy.md', sentinel: '# HAProxy' },
-  { source: 'platforms/caddy.md', sentinel: '# Caddy' },
-  { source: 'platforms/tomcat.md', sentinel: '# Apache Tomcat' },
-  { source: 'platforms/postgresql.md', sentinel: '# PostgreSQL' },
-  { source: 'platforms/mariadb.md', sentinel: '# MariaDB and MySQL' },
-  { source: 'platforms/postfix.md', sentinel: '# Postfix' },
-  { source: 'platforms/dovecot.md', sentinel: '# Dovecot' },
-  { source: 'platforms/iis.md', sentinel: '# Microsoft IIS' },
-]
+  { source: 'platforms/README.md', sentinel: '# Supported platforms', repo: AGENT },
+  { source: 'platforms/nginx.md', sentinel: '# nginx', repo: AGENT },
+  { source: 'platforms/apache.md', sentinel: '# Apache httpd', repo: AGENT },
+  { source: 'platforms/haproxy.md', sentinel: '# HAProxy', repo: AGENT },
+  { source: 'platforms/caddy.md', sentinel: '# Caddy', repo: AGENT },
+  { source: 'platforms/tomcat.md', sentinel: '# Apache Tomcat', repo: AGENT },
+  { source: 'platforms/postgresql.md', sentinel: '# PostgreSQL', repo: AGENT },
+  { source: 'platforms/mariadb.md', sentinel: '# MariaDB and MySQL', repo: AGENT },
+  { source: 'platforms/postfix.md', sentinel: '# Postfix', repo: AGENT },
+  { source: 'platforms/dovecot.md', sentinel: '# Dovecot', repo: AGENT },
+  { source: 'platforms/iis.md', sentinel: '# Microsoft IIS', repo: AGENT },
+].map((page) => ({ repo: CORE, ...page }))
 
 /*
  * Upstream pages this site deliberately does not publish.
@@ -114,10 +148,10 @@ const PAGES = [
  * beside it.
  */
 const UNPUBLISHED = new Map([
-  ['api-reference.md',
+  [`${CORE}:api-reference.md`,
     'split across the generated endpoint reference by sync-guides.mjs; ' +
     'publishing it whole as well would give a reader two accounts of the same endpoint'],
-  ['README.md',
+  [`${CORE}:README.md`,
     "the upstream index; this site has its own, and a directory listing of a " +
     'repository is not a landing page'],
 ])
@@ -140,8 +174,26 @@ const fileFor = (source) => {
   return `docs${route.endsWith('/') ? route + 'index' : route}.md`
 }
 
-/** Every source path this run publishes, for deciding what stays internal. */
-const published = new Set(PAGES.map((p) => p.source))
+/**
+ * Every source path this run publishes, and which repository it comes from.
+ *
+ * One owner per path. Two repositories claiming the same page is a
+ * configuration error rather than something to resolve by ordering — whichever
+ * won would depend on the order of this list, and the loser would be edited by
+ * somebody who then could not find their change on the site.
+ */
+const published = new Map()
+for (const page of PAGES) {
+  const owner = published.get(page.source)
+  if (owner) {
+    console.error(
+      `sync-pages: ${page.source} is published from both ${owner} and ` +
+        `${page.repo}. A page has one source of truth.`,
+    )
+    process.exit(1)
+  }
+  published.set(page.source, page.repo)
+}
 
 /*
  * Links out of the set, to places this site does not host.
@@ -165,7 +217,7 @@ const EXTERNAL_PAGE = {
  * one, and a silent rewrite would leave prose promising an explanation it no
  * longer points to.
  */
-function rewriteLink(target, fromSource) {
+function rewriteLink(target, fromSource, fromRepo) {
   if (/^(https?:|mailto:|#)/.test(target)) return null
 
   const [path, hash = ''] = target.split('#')
@@ -189,7 +241,7 @@ function rewriteLink(target, fromSource) {
   const clean = path.startsWith('../')
     ? path.slice(3)
     : `docs/${fromDir === '.' ? '' : fromDir + '/'}${path.replace(/^\.\//, '')}`
-  return `${CODE_TREE}/${clean}${anchor}`
+  return `${codeTree(fromRepo)}/${clean}${anchor}`
 }
 
 /*
@@ -220,11 +272,11 @@ function neutraliseMustaches(markdown) {
     .join('')
 }
 
-function rewriteLinks(markdown, fromSource) {
+function rewriteLinks(markdown, fromSource, fromRepo) {
   return markdown.replace(
     /\]\(([^)\s]+)(\s+"[^"]*")?\)/g,
     (whole, target, title = '') => {
-      const next = rewriteLink(target, fromSource)
+      const next = rewriteLink(target, fromSource, fromRepo)
       return next === null ? whole : `](${next}${title})`
     },
   )
@@ -237,39 +289,28 @@ function unresolvedLinks(markdown) {
     .filter((t) => !/^(https?:|mailto:|#|\/)/.test(t))
 }
 
-async function loadText(source) {
+/** Read a file from one upstream: a local checkout if given one, else raw.github. */
+async function load(repo, source, binary = false) {
+  const { localDir } = UPSTREAMS[repo]
   if (localDir) {
     const path = join(localDir, source)
     if (!existsSync(path)) {
-      console.error(`sync-pages: ${path} does not exist`)
+      console.error(`sync-pages: ${path} does not exist (${repo})`)
       process.exit(1)
     }
-    return readFileSync(path, 'utf8')
+    return binary ? readFileSync(path) : readFileSync(path, 'utf8')
   }
-  const response = await fetch(`${RAW}/${source}`)
+  const url = `${rawBase(repo)}/${source}`
+  const response = await fetch(url)
   if (!response.ok) {
-    console.error(`sync-pages: ${RAW}/${source} returned ${response.status}`)
+    console.error(`sync-pages: ${url} returned ${response.status}`)
     process.exit(1)
   }
-  return response.text()
+  return binary ? Buffer.from(await response.arrayBuffer()) : response.text()
 }
 
-async function loadBinary(source) {
-  if (localDir) {
-    const path = join(localDir, source)
-    if (!existsSync(path)) {
-      console.error(`sync-pages: ${path} does not exist`)
-      process.exit(1)
-    }
-    return readFileSync(path)
-  }
-  const response = await fetch(`${RAW}/${source}`)
-  if (!response.ok) {
-    console.error(`sync-pages: ${RAW}/${source} returned ${response.status}`)
-    process.exit(1)
-  }
-  return Buffer.from(await response.arrayBuffer())
-}
+const loadText = (repo, source) => load(repo, source)
+const loadBinary = (repo, source) => load(repo, source, true)
 
 /*
  * Every upstream page is accounted for, or this fails.
@@ -280,7 +321,8 @@ async function loadBinary(source) {
  * closes it from the other side — enumerate what upstream actually has, and
  * insist every file is either published or opted out with a reason.
  */
-async function upstreamPages() {
+async function upstreamPages(repo) {
+  const { localDir, ref } = UPSTREAMS[repo]
   if (localDir) {
     const walk = (dir, prefix = '') => {
       const out = []
@@ -297,17 +339,19 @@ async function upstreamPages() {
   // The tree API rather than the contents API: one request for the whole
   // repository instead of one per directory, and it does not miss a page in a
   // subdirectory nobody thought to look in.
-  const url = `https://api.github.com/repos/certpilot/certpilot/git/trees/${REF}?recursive=1`
+  const url = `https://api.github.com/repos/${repo}/git/trees/${ref}?recursive=1`
   const headers = { accept: 'application/vnd.github+json' }
   if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`
   const response = await fetch(url, { headers })
   if (!response.ok) {
-    console.error(`sync-pages: listing upstream returned ${response.status} — cannot verify coverage`)
+    console.error(
+      `sync-pages: listing ${repo} returned ${response.status} — cannot verify coverage`,
+    )
     process.exit(1)
   }
   const { tree, truncated } = await response.json()
   if (truncated) {
-    console.error('sync-pages: the upstream tree listing was truncated, so coverage cannot be trusted')
+    console.error(`sync-pages: the tree listing for ${repo} was truncated, so coverage cannot be trusted`)
     process.exit(1)
   }
   return tree
@@ -315,27 +359,60 @@ async function upstreamPages() {
     .map((n) => n.path.slice('docs/'.length))
 }
 
-const upstream = await upstreamPages()
-const unaccounted = upstream
-  .filter((source) => !published.has(source) && !UNPUBLISHED.has(source))
-  .sort()
+const upstream = new Map()
+for (const repo of Object.keys(UPSTREAMS)) {
+  upstream.set(repo, await upstreamPages(repo))
+}
+
+/*
+ * Every upstream page is accounted for, per repository.
+ *
+ * A page is accounted for if this site publishes it *from that repository*, if
+ * it is opted out there, or if some other repository publishes the same path.
+ * That last clause is what makes a page able to move: for the window between a
+ * page arriving in its new repository and the old copy being deleted, the old
+ * copy is a leftover rather than an unpublished page, and a leftover is not the
+ * failure this check exists to catch. It is still worth seeing, so it is
+ * reported below rather than passed over in silence.
+ */
+const unaccounted = []
+const leftovers = []
+for (const [repo, sources] of upstream) {
+  for (const source of sources) {
+    const owner = published.get(source)
+    if (owner === repo) continue
+    if (UNPUBLISHED.has(`${repo}:${source}`)) continue
+    if (owner) { leftovers.push(`  ${repo} docs/${source} — published from ${owner}`); continue }
+    unaccounted.push(`  ${repo} docs/${source}`)
+  }
+}
 
 if (unaccounted.length) {
   console.error(
     'sync-pages: upstream has pages this site neither publishes nor opts out of:\n' +
-      unaccounted.map((s) => `  docs/${s}`).join('\n') +
+      unaccounted.sort().join('\n') +
       '\n\nAdd each one to PAGES, or to UNPUBLISHED with the reason it stays behind.',
   )
   process.exit(1)
 }
 
-// And the other direction: a page listed here that upstream no longer has
+if (leftovers.length) {
+  console.warn(
+    'sync-pages: these pages still exist in a repository that no longer owns them:\n' +
+      leftovers.sort().join('\n') +
+      '\n\nNobody reads them; delete them where they were left.',
+  )
+}
+
+// And the other direction: a page listed here that its repository no longer has
 // would otherwise fail later, in a fetch, with a 404 that reads like an outage.
-const vanished = PAGES.map((p) => p.source).filter((s) => !upstream.includes(s))
+const vanished = PAGES
+  .filter((p) => !upstream.get(p.repo).includes(p.source))
+  .map((p) => `  ${p.repo} docs/${p.source}`)
 if (vanished.length) {
   console.error(
     'sync-pages: these are published here and no longer exist upstream:\n' +
-      vanished.map((s) => `  docs/${s}`).join('\n'),
+      vanished.sort().join('\n'),
   )
   process.exit(1)
 }
@@ -366,30 +443,43 @@ if (unreachable.length) {
 }
 
 const nextPages = new Map()
-const wantedImages = new Set()
+// Keyed by repository as well as path: an image travels with the page that
+// referenced it, and two repositories can hold different files under the same
+// name. Resolved below, where a collision is a hard error rather than whichever
+// one was fetched last.
+const wantedImages = new Map()
 
 for (const page of PAGES) {
-  const markdown = await loadText(page.source)
+  const markdown = await loadText(page.repo, page.source)
 
   if (!markdown.includes(page.sentinel)) {
     console.error(
-      `sync-pages: ${page.source} does not contain ${JSON.stringify(page.sentinel)} — ` +
-        `either it was renamed upstream or this is not the file we asked for`,
+      `sync-pages: ${page.repo} docs/${page.source} does not contain ` +
+        `${JSON.stringify(page.sentinel)} — either it was renamed upstream or ` +
+        `this is not the file we asked for`,
     )
     process.exit(1)
   }
 
   for (const [, target] of markdown.matchAll(/\]\((images\/[^)\s]+)\)/g)) {
-    wantedImages.add(target)
+    const owner = wantedImages.get(target)
+    if (owner && owner !== page.repo) {
+      console.error(
+        `sync-pages: ${target} is referenced from both ${owner} and ${page.repo}, ` +
+          `and this site can only serve one file at that path.`,
+      )
+      process.exit(1)
+    }
+    wantedImages.set(target, page.repo)
   }
 
-  const body = neutraliseMustaches(rewriteLinks(markdown, page.source))
+  const body = neutraliseMustaches(rewriteLinks(markdown, page.source, page.repo))
 
   const unresolved = unresolvedLinks(body)
   if (unresolved.length) {
     console.error(
-      `sync-pages: ${page.source} has links that will not resolve once ` +
-        `published here:\n  ${unresolved.join('\n  ')}`,
+      `sync-pages: ${page.repo} docs/${page.source} has links that will not ` +
+        `resolve once published here:\n  ${unresolved.join('\n  ')}`,
     )
     process.exit(1)
   }
@@ -400,7 +490,7 @@ for (const page of PAGES) {
     // otherwise offer to edit this vendored copy, and that edit would be
     // overwritten by the next sync without anybody being told.
     '---\neditLink: false\n---\n\n' +
-      `<!-- Synced from docs/${page.source} in the CertPilot repository by\n` +
+      `<!-- Synced from docs/${page.source} in ${page.repo} by\n` +
       `     scripts/sync-pages.mjs. Edit it there, not here. -->\n\n` +
       body.trimEnd() +
       '\n',
@@ -412,8 +502,8 @@ for (const page of PAGES) {
 // `/images/dashboard.png` resolves on the published subpath without every page
 // having to know what the subpath is.
 const nextImages = new Map()
-for (const image of [...wantedImages].sort()) {
-  nextImages.set(`docs/public/${image}`, await loadBinary(image))
+for (const [image, repo] of [...wantedImages].sort()) {
+  nextImages.set(`docs/public/${image}`, await loadBinary(repo, image))
 }
 
 const imageDir = join(root, 'docs/public/images')

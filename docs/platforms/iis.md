@@ -2,7 +2,7 @@
 editLink: false
 ---
 
-<!-- Synced from docs/platforms/iis.md in the CertPilot repository by
+<!-- Synced from docs/platforms/iis.md in certpilot/certpilot-agent by
      scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Microsoft IIS

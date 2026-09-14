@@ -104,15 +104,28 @@ pages render as they always did.
 
 ## The guide is vendored as well
 
-The guides above are fragments of one file. The fifteen documents under
-**Guide** are whole pages from the code repository -- architecture, discovery,
-monitoring, deployment, the agent, posture, the Vault gateway, writing a
-gateway, configuration, operations, security, the database, troubleshooting,
-getting started and implementation status.
+The guides above are fragments of one file. The documents under **Guide** are
+whole pages from the code -- architecture, discovery, monitoring, deployment,
+the agent, posture, the Vault gateway, writing a gateway, configuration,
+operations, security, the database, troubleshooting, getting started,
+implementation status, and a page per supported platform.
 
 They were in the same position the API prose used to be in: about four thousand
 lines, readable only by somebody who had already cloned the code. That is
 backwards for the pages a reader reaches before they know what CertPilot is.
+
+**They come from more than one repository.** The host agent lives in
+`certpilot-agent`, and its pages live with it — the agent guide and all eleven
+platform pages. That is the same principle as the rest of this: prose about the
+system is updated by the person changing the system, which means it follows the
+code when the code moves.
+
+A page's *source path* is its identity here, not the repository it came from.
+`platforms/iis.md` publishes to `/platforms/iis` whichever repository holds it,
+so a page can move without its URL changing and without every link to it needing
+an edit. Two repositories claiming the same path is a hard error — whichever won
+would depend on the order of a list, and the loser would be edited by somebody
+who could then not find their change on the site.
 
 `scripts/sync-pages.mjs` fetches them whole, with the screenshots they
 reference. Three things happen on the way in:
@@ -120,8 +133,8 @@ reference. Three things happen on the way in:
 - **Links between published pages become site routes.** `security.md` in the
   source becomes `/security` here, anchors intact, so the set reads as one
   document instead of a ring of round trips to GitHub.
-- **Links to code become GitHub URLs.** `../core/store/store.go` resolved to a
-  real file in the code repository and to nothing here.
+- **Links to code become GitHub URLs**, in the repository the page came from.
+  `../core/store/store.go` resolved to a real file there and to nothing here.
 - **Screenshots are copied into `docs/public/images/`** and their links become
   `/images/…`, which VitePress resolves against `base` on the published subpath.
 
@@ -130,16 +143,19 @@ site fails the build on a dead link rather than shipping one, and a silent
 rewrite would leave prose promising an explanation it no longer points to.
 
 ```bash
-npm run sync:pages                 # refresh from the default branch
+npm run sync:pages                 # refresh from each default branch
 npm run sync:pages -- --check      # exit 1 if stale (CI runs this)
 
-# Author the pages in the code repository, then sync from a local checkout:
-CERTPILOT_DOCS_DIR=../certpilot/docs npm run sync:pages
+# Author the pages in the repository they belong to, then sync from local
+# checkouts. Either variable may be set on its own; the other repository is
+# still read from GitHub.
+CERTPILOT_DOCS_DIR=../certpilot/docs \
+  CERTPILOT_AGENT_DOCS_DIR=../certpilot-agent/docs npm run sync:pages
 ```
 
-**Edit these in the code repository, not here.** Each synced copy carries a
-header saying so and sets `editLink: false`, because the edit button would
-otherwise offer to change a file the next sync overwrites.
+**Edit these in the repository they came from, not here.** Each synced copy
+carries a header naming that repository and sets `editLink: false`, because the
+edit button would otherwise offer to change a file the next sync overwrites.
 
 Each page in the manifest names a sentinel heading that must appear in what
 comes back. A file renamed upstream, or a 404 served as a 200, otherwise arrives
@@ -186,7 +202,7 @@ npm run preview  # serve the built site
 | `npm run gen` | Regenerate the endpoint pages from `routes.json` |
 | `npm run sync` | Refresh `routes.json` from the CertPilot repository |
 | `npm run sync:guides` | Refresh the guide fragments from `docs/api-reference.md` |
-| `npm run sync:pages` | Refresh the fifteen guide pages and their screenshots |
+| `npm run sync:pages` | Refresh the guide pages and their screenshots |
 | `npm run check` | Fail if any route is undocumented or any anchor is broken |
 
 Hand-written pages live in `docs/api/` — authentication, roles, conventions,
@@ -195,11 +211,13 @@ be edited directly.
 
 ## Keeping it in sync
 
-Everything on this site comes from the CertPilot repository: the route table,
-the API prose, and the fifteen guide pages with their screenshots. A scheduled
-workflow refreshes all three weekly and opens a pull request when anything has
-changed, so a new endpoint or a rewritten explanation shows up here without
-anyone remembering to push it.
+Everything on this site comes from the code: the route table, the API prose,
+and the guide pages with their screenshots — from `certpilot` and, for the agent
+and the platform pages, from `certpilot-agent`. A scheduled workflow refreshes
+all of it weekly and opens a pull request when anything has changed, so a new
+endpoint or a rewritten explanation shows up here without anyone remembering to
+push it. Either repository can also tell this one to sync immediately, and the
+dispatch says which one it was so that only that repository's commit is pinned.
 
 Each of `sync`, `sync:guides` and `sync:pages` takes `-- --check`, which exits
 non-zero if the vendored copy is stale. CI runs all three on a pull request, so

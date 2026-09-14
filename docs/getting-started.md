@@ -2,7 +2,7 @@
 editLink: false
 ---
 
-<!-- Synced from docs/getting-started.md in the CertPilot repository by
+<!-- Synced from docs/getting-started.md in certpilot/certpilot by
      scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Getting started

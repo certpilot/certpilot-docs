@@ -2,7 +2,7 @@
 editLink: false
 ---
 
-<!-- Synced from docs/templates.md in the CertPilot repository by
+<!-- Synced from docs/templates.md in certpilot/certpilot by
      scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Certificate templates
