@@ -22,6 +22,7 @@ the limitations that apply.
 | [MariaDB and MySQL](/platforms/mariadb) | Database | Reloads via `FLUSH SSL` |
 | [Postfix](/platforms/postfix) | Mail transfer agent | Certificate presented on port 25 |
 | [Dovecot](/platforms/dovecot) | IMAP and POP3 server | Certificate presented to mail clients |
+| [Microsoft IIS](/platforms/iis) | Web server | Windows. Imports into the certificate store; reads no file |
 
 A platform is listed here only after it has been tested. Platforms that have
 not been tested are not listed, which does not mean they cannot be used — see
@@ -29,15 +30,20 @@ not been tested are not listed, which does not mean they cannot be used — see
 
 ## How platforms are tested
 
-Each platform has an automated test, run by `make verify-profiles`. It needs a
-container runtime, so it is run on demand rather than in CI. For each platform,
-the test:
+Each Linux platform has an automated test, run by `make verify-profiles`. It
+needs a container runtime, so it is run on demand rather than in CI. For each
+platform, the test:
 
 1. Starts the service in a container with an initial certificate.
 2. Installs a second, different certificate using the agent.
 3. Runs the platform's configuration check and reload commands.
 4. Opens a TLS connection from outside the container and confirms the service
    returns the newly installed certificate and its chain.
+
+IIS cannot run in a container and is tested in CI on a Windows runner instead,
+to the same standard: install, then renew, then a deliberately unprovable
+install, with a TLS handshake from outside after each. See
+[how this platform is tested](/platforms/iis#how-this-platform-is-tested).
 
 The versions each platform was last tested against are recorded in the agent
 and shown by `certpilot-agent profiles <name>`.
@@ -62,6 +68,7 @@ measured by running each check against a live instance in three states.
 | PostgreSQL | No check command available | | |
 | MariaDB and MySQL | No check command available | | |
 | Apache Tomcat | No check command available | | |
+| Microsoft IIS | No check command available; `verify` reconnects afterwards | | |
 
 Where a check command does not detect a fault, or does not exist,
 [post-renewal verification](/deployment) provides the backstop: it
@@ -76,11 +83,14 @@ tested, not because they are unsupported. The agent requires only a file path,
 a format, a check command and a reload command, which can be specified
 manually. See [agent.md](/agent) for the configuration format.
 
-**Windows.** The agent runs on Windows and writes certificates to files there,
-but none of the profiles above apply — each describes a Linux service reloaded
-with `systemctl` — and it does not write to the Windows certificate store, which
-is what IIS, Exchange and ADFS read from. See
-[where the agent runs](/agent#where-it-runs).
+**Windows services other than IIS.** Exchange, ADFS, Network Policy Server and
+Remote Desktop Services read from the same certificate store as IIS and differ
+only in the command that binds a thumbprint to them. Each is the IIS profile
+with a different `bind`, and none has been run by this project — see [other
+consumers of the store](/platforms/iis#other-consumers-of-the-store). The Linux profiles
+above do not apply on Windows: each describes a service reloaded with
+`systemctl`, and naming one there is refused. See [where the agent
+runs](/agent#where-it-runs).
 
 **Appliances without a writable filesystem.** F5 BIG-IP and Azure Key Vault are
 updated through their APIs by CertPilot Core rather than by the host agent. See

@@ -81,9 +81,9 @@ const PAGES = [
   { source: 'templates.md', sentinel: '# Certificate templates' },
 
   // The platform pages. Their sentinels are the H1 rather than a section
-  // heading, because all nine share "## What CertPilot does" and a sentinel
-  // that matches nine files cannot detect the one thing a sentinel is for:
-  // getting a different page than the one asked for.
+  // heading, because the Linux ones all share "## What CertPilot does" and a
+  // sentinel that matches nine files cannot detect the one thing a sentinel is
+  // for: getting a different page than the one asked for.
   { source: 'platforms/README.md', sentinel: '# Supported platforms' },
   { source: 'platforms/nginx.md', sentinel: '# nginx' },
   { source: 'platforms/apache.md', sentinel: '# Apache httpd' },
@@ -94,6 +94,7 @@ const PAGES = [
   { source: 'platforms/mariadb.md', sentinel: '# MariaDB and MySQL' },
   { source: 'platforms/postfix.md', sentinel: '# Postfix' },
   { source: 'platforms/dovecot.md', sentinel: '# Dovecot' },
+  { source: 'platforms/iis.md', sentinel: '# Microsoft IIS' },
 ]
 
 /*
