@@ -21,6 +21,8 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  # To start deploy.yml after publishing. See "Deploy what was just published".
+  actions: write
 
 jobs:
   sync:
@@ -66,8 +68,8 @@ jobs:
       # A page arrives here as prose somebody already wrote and already had
       # reviewed, in the repository it was written in. Holding it behind a
       # second review in this one buys nothing and costs the delay this
-      # workflow exists to remove — so pages go straight to main, which is what
-      # deploy.yml watches.
+      # workflow exists to remove — so pages go straight to main, and the
+      # deploy is then asked for explicitly below.
       #
       # The build runs first. Pushing to main publishes without CI, since
       # ci.yml only runs on pull requests, and a page that breaks the build
@@ -84,6 +86,25 @@ jobs:
           git add docs/
           git commit -m 'Sync the pages from CertPilot'
           git push
+
+      # Asked for, rather than assumed to follow from the push.
+      #
+      # deploy.yml triggers on push to main, and this workflow used to rely on
+      # that. It does not work: GitHub deliberately refuses to start a workflow
+      # from a push made with the default GITHUB_TOKEN, so that a workflow
+      # cannot trigger itself forever. Nothing reports it — the push succeeds,
+      # the job goes green, and no deployment happens.
+      #
+      # So every page this job published sat on main undeployed until some
+      # unrelated push happened to carry it out. The site was stale and nothing
+      # said so, which is the exact failure this pipeline was built to remove.
+      # Found by publishing a page, watching the sync succeed, and seeing the
+      # live site still serving the old copy.
+      - name: Deploy what was just published
+        if: steps.pages.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run deploy.yml --ref main
 
       # Routes and guides are different, and get a pull request. A new endpoint
       # usually needs a sentence of prose that a generator cannot write, and
