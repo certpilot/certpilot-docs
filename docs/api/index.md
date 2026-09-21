@@ -32,15 +32,16 @@ Start with [Authentication](/api/authentication), then
 
 ## What is not here
 
-Two things worth knowing before you plan against this API.
-
-**There is no revocation endpoint.** Both gateways implement revocation, but the
-core exposes no route for it. `DELETE /certificates/:id` deletes CertPilot's
-*record* and leaves the certificate live at the CA. This is a known gap, not an
-oversight in this documentation.
+One thing worth knowing before you plan against this API.
 
 **There is no rate limiting.** The API does not throttle callers. If you are
 exposing it beyond a trusted network, put something in front of it.
+
+> Revocation **is** here, and this page used to say it was not.
+> `POST /certificates/:id/revoke` (admin) tells the CA first and records the
+> result only if the CA agreed. `DELETE /certificates/:id` deletes the record
+> and does not revoke — it refuses a live certificate with a `409` that names
+> the revoke endpoint. See [Operations](/operations#revoke).
 
 ## Health
 
