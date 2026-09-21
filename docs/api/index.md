@@ -43,16 +43,54 @@ exposing it beyond a trusted network, put something in front of it.
 > and does not revoke — it refuses a live certificate with a `409` that names
 > the revoke endpoint. See [Operations](/operations#revoke).
 
+## From the command line
+
+Every route below is a 401 without a credential. There is no anonymous mode,
+locally or anywhere else. The quickest credential to get hold of is a session,
+because a password sign-in needs nothing but CertPilot itself — a bearer token
+needs an identity provider.
+
+```bash
+JAR=$(mktemp)
+curl -sS -c "$JAR" -X POST localhost:8080/api/v1/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email": "you@example.com", "password": "..."}'
+```
+
+Then carry the jar:
+
+```bash
+curl -sS -b "$JAR" localhost:8080/api/v1/certificates
+```
+
+`-H "Authorization: Bearer $TOKEN"` substitutes for `-b "$JAR"` anywhere, and is
+what a script in a real deployment uses. The examples in the guides on this site
+use the jar because it works during an evaluation, before any provider is wired
+up. See [Authentication](/api/authentication) for how tokens are verified.
+
+## Authenticating an unattended screen
+
+A screen in a corridor has nobody to sign in at it. It gets a display token
+instead — read-only, `GET` only, revocable, and refused outright on the paths
+that carry key material. See [Display tokens](/api/display-tokens).
+
 ## Health
 
 ```
 GET /healthz
 ```
 
-The only unauthenticated endpoint, and deliberately uninformative — it reports
-that the process is up and says nothing about the database, the gateways, or
-anything else an unauthenticated caller has no business learning.
+Deliberately uninformative — it reports that the process is up and says nothing
+about the database, the gateways, or anything else an unauthenticated caller
+has no business learning.
 
 ```json
 { "status": "ok", "service": "certpilot-core" }
 ```
+
+It is one of **four** unauthenticated endpoints, not the only one, as this page
+said until recently. The other three are the ones sign-in itself needs:
+`GET /api/v1/auth/config`, which a browser reads to find out *how* to sign in;
+`POST /api/v1/auth/login`; and `POST /api/v1/auth/callback`, where an identity
+provider returns with an authorization code. If you are restricting access at a
+reverse proxy, those three have to stay reachable or nobody can sign in.
