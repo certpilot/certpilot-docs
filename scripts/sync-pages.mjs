@@ -104,6 +104,8 @@ const PAGES = [
   { source: 'agent.md', sentinel: '## Enrolment', repo: AGENT },
   { source: 'posture.md', sentinel: '# Cryptographic posture' },
   { source: 'gateways/vault.md', sentinel: '# The Vault gateway' },
+  { source: 'gateways/acme.md', sentinel: '# The ACME gateway' },
+  { source: 'gateways/selfsigned.md', sentinel: '# The self-signed gateway' },
   { source: 'writing-a-gateway.md', sentinel: '# Writing a gateway' },
   // Not a heading, unlike every other sentinel here. That page's H1 changed
   // when the agent's rows joined the gateway rows on it, and a sentinel that

@@ -460,3 +460,21 @@ input,
   .VPNavBarHamburger { display: flex !important; }
   .VPNavScreen { display: block; }
 }
+
+/* ── Wide tables scroll instead of pushing the page ─────────────────────────
+ *
+ * A table wider than the viewport was widening the whole document: at 768px
+ * the Vault gateway page measured a 784px scrollWidth, and the culprit was a
+ * three-column table, not the code block beside it. Every page on this site
+ * with a table of more than two columns is one long cell away from the same
+ * thing, and a horizontally scrolling *page* moves the prose out from under
+ * the reader rather than just the table.
+ *
+ * `display: block` with `overflow-x: auto` is what VitePress's own theme does
+ * for this; it is not applying here, so it is set explicitly.
+ */
+.vp-doc table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+}
