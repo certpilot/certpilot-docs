@@ -95,6 +95,7 @@ const check = process.argv.includes('--check')
  * needing an edit.
  */
 const PAGES = [
+  { source: 'evaluation.md', sentinel: '## 1. Start it' },
   { source: 'getting-started.md', sentinel: '## 1. Generate development keys' },
   { source: 'architecture.md', sentinel: '## Decision 1 — a gateway is a process, not a package' },
   { source: 'discovery.md', sentinel: '## Certificate Transparency' },
