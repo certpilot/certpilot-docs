@@ -71,15 +71,41 @@ export default withMermaid(
 
       outline: { level: [2, 3], label: 'On this page' },
 
+      /*
+       * The six journeys, not the six topics.
+       *
+       * "Guide / API / Endpoints" described how this site is *built*. A PKI
+       * team arriving here is at one of six points instead: working out
+       * whether this fits, standing it up, running it, wiring it to their
+       * estate, looking something up, or changing it. Each entry below lands
+       * on the first page of that journey, and the sidebar under it is the
+       * rest of the same journey.
+       */
       nav: [
-        { text: 'Guide', link: '/getting-started', activeMatch: '^/(?!api/)' },
-        { text: 'API', link: '/api/', activeMatch: '^/api/(?!reference)' },
+        { text: 'Evaluate', link: '/getting-started', activeMatch: '^/(getting-started|architecture|status|compatibility)' },
+        { text: 'Deploy', link: '/configuration', activeMatch: '^/(configuration|database|operations|security)' },
+        { text: 'Operate', link: '/discovery', activeMatch: '^/(discovery|monitoring|deployment|templates|posture|troubleshooting)' },
+        { text: 'Integrate', link: '/agent', activeMatch: '^/(agent|platforms|gateways|writing-a-gateway)' },
         {
-          text: 'Endpoints',
-          link: generated[0]?.link ?? '/api/',
-          activeMatch: '^/api/reference/',
+          text: 'Reference',
+          activeMatch: '^/api/',
+          items: [
+            { text: 'API overview', link: '/api/' },
+            { text: 'Authentication', link: '/api/authentication' },
+            { text: 'Roles and permissions', link: '/api/roles' },
+            { text: 'Endpoint reference', link: generated[0]?.link ?? '/api/' },
+            { text: 'Objects', link: '/api/reference/models' },
+          ],
         },
-        { text: 'CertPilot', link: CODE },
+        {
+          text: 'Contribute',
+          activeMatch: '^/repositories',
+          items: [
+            { text: 'Repositories', link: '/repositories' },
+            { text: 'Writing a gateway', link: '/writing-a-gateway' },
+            { text: 'Source on GitHub', link: CODE },
+          ],
+        },
       ],
 
       /*
@@ -128,9 +154,17 @@ export default withMermaid(
           },
         ],
 
+        /*
+         * Every journey is expanded except Integrate, which is fourteen
+         * entries — eleven of them platform pages that matter enormously to
+         * the person installing on Dovecot and not at all to anybody else.
+         * Collapsed, the six journeys fit on one screen and stay legible as a
+         * map of the site; expanded, Integrate alone pushes Reference and
+         * Contribute below the fold.
+         */
         '/': guide.map((group) => ({
           ...group,
-          collapsed: group.text === 'Project',
+          collapsed: group.text === 'Integrate',
         })),
       },
 

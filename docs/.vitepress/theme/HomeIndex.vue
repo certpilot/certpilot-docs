@@ -7,11 +7,11 @@
  * spends the entire first screen on three paragraphs of prose while the reader
  * is looking for an endpoint.
  *
- * Everything quoted here is read from `census-generated.json`, which the
- * endpoint generator emits from routes.json. Nothing on this page is a number
- * somebody typed: the previous hand-written tagline advertised 109 endpoints
- * against a router serving 111, which is exactly the drift the generated
- * reference tables exist to prevent.
+ * The counts still on this page — the per-section endpoint totals and the
+ * roles — are read from the generated census and sidebar, never typed. The
+ * hand-written tagline this replaced advertised 109 endpoints against a router
+ * serving 111, which is exactly the drift the generated reference exists to
+ * prevent.
  */
 import { withBase } from 'vitepress'
 import census from '../census-generated.json'
@@ -20,9 +20,13 @@ import sections from '../sidebar-generated.json'
 // about what the guide contains.
 import guide from '../guide-sidebar.json'
 
-// Widest method count, so the bars are proportional to each other rather than
-// each filling its own row.
-const peak = Math.max(...census.methods.map((m) => m.count))
+/*
+ * The method census used to sit in the hero. It is now on the API overview,
+ * where a reader who needs it is already standing — see MethodCensus.vue.
+ * The hero's right column carries the first action instead, because the
+ * question a PKI team arrives with is "can I try this", not "how many GETs
+ * are there".
+ */
 </script>
 
 <template>
@@ -48,23 +52,24 @@ const peak = Math.max(...census.methods.map((m) => m.count))
         </div>
       </div>
 
-      <!-- The census. Real counts, and the honest visual for a reference site:
-           a picture of the actual shape of the API. -->
-      <aside class="census" aria-label="Endpoints by HTTP method">
-        <p class="census-head">By method</p>
-        <dl class="census-list">
-          <div v-for="m in census.methods" :key="m.method" class="census-row">
-            <dt class="census-method" :data-method="m.method">{{ m.method }}</dt>
-            <dd class="census-bar">
-              <span :style="{ width: `${(m.count / peak) * 100}%` }" />
-            </dd>
-            <dd class="census-count">{{ m.count }}</dd>
-          </div>
-        </dl>
-        <p class="census-foot">
-          {{ census.displayTokenReadable }} of them are readable by an unattended
-          wall screen. The rest need a person or an agent.
+      <!-- The first action. One command, a real one, and what it leaves you
+           with — so the decision to try it is not preceded by reading a page. -->
+      <aside class="first-run" aria-labelledby="first-run-head">
+        <p class="first-run-head" id="first-run-head">Start here</p>
+        <div class="first-run-code">
+          <code>git clone https://github.com/certpilot/certpilot</code>
+          <code>cd certpilot &amp;&amp; make dev</code>
+        </div>
+        <p class="first-run-note">
+          Starts PostgreSQL, applies every migration, generates a development
+          key, runs the self-signed gateway and registers it as a CA — so there
+          is something to issue from on the first run. The console is then on
+          <code>localhost:3000</code>, and the administrator password is printed
+          once.
         </p>
+        <a class="first-run-more" :href="withBase('/getting-started')">
+          Issue a certificate, then point it at a real CA →
+        </a>
       </aside>
     </header>
 
@@ -72,10 +77,11 @@ const peak = Math.max(...census.methods.map((m) => m.count))
          can do is get out of the way and list what is actually here. The guide
          gets the same treatment rather than a row of cards describing it. -->
     <section class="directory">
-      <h2 class="directory-head">The guide</h2>
+      <h2 class="directory-head">Six ways in</h2>
       <div class="guide-groups">
         <div v-for="g in guide" :key="g.text" class="guide-group">
           <h3 class="guide-head">{{ g.text }}</h3>
+          <p v-if="g.blurb" class="guide-blurb">{{ g.blurb }}</p>
           <ul class="guide-list">
             <li v-for="i in g.items" :key="i.link">
               <a :href="withBase(i.link)">{{ i.text }}</a>
@@ -135,8 +141,8 @@ const peak = Math.max(...census.methods.map((m) => m.count))
 }
 
 .hero-title {
-  /* Capped rather than scaled freely: above this the title crowds the census
-     column beside it at tablet widths. */
+  /* Capped rather than scaled freely: above this the title crowds the panel
+     beside it at tablet widths. */
   font-size: clamp(1.875rem, 3.4vw, 2.5rem);
   line-height: 1.08;
   letter-spacing: -0.028em;
@@ -197,80 +203,96 @@ const peak = Math.max(...census.methods.map((m) => m.count))
   background: var(--vp-c-brand-1);
 }
 
-/* ── Census ──────────────────────────────────────────────────────────────── */
-.census {
+/* ── First run ───────────────────────────────────────────────────────────── */
+.first-run {
   border: 1px solid var(--vp-c-divider);
   border-radius: 2px;
   padding: 1.25rem;
   background: var(--vp-c-bg-alt);
+  min-width: 0;
 }
 
-.census-head,
-.census-foot {
+.first-run-head {
   font-family: var(--vp-font-family-mono);
   font-size: 0.6875rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--vp-c-text-3);
+  /* --vp-c-text-3 measures 4.07:1 against this surface, under the 4.5:1 that
+     text under 18.66px needs. Measured, not eyeballed — see the audit in the
+     pull request. text-2 clears it in both themes. */
+  color: var(--vp-c-text-2);
   margin: 0;
 }
 
-.census-foot {
-  text-transform: none;
-  letter-spacing: 0;
-  font-size: 0.75rem;
+.first-run-code {
+  margin: 1rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.first-run-code code {
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.8125rem;
   line-height: 1.5;
-  margin-top: 1.125rem;
+  color: var(--vp-c-text-1);
+  background: var(--vp-c-bg);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 2px;
+  padding: 0.5rem 0.625rem;
+  /* Wraps rather than scrolls. A clone URL is longer than a phone is wide,
+     and a command running off the edge of its own panel reads as a broken
+     page rather than as something to scroll. `anywhere` because a URL has no
+     spaces to break at. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.first-run-note {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--vp-c-text-2);
+  margin: 1.125rem 0 0;
   padding-top: 0.875rem;
   border-top: 1px solid var(--vp-c-divider);
 }
 
-.census-list {
-  margin: 1rem 0 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.census-row {
-  display: grid;
-  grid-template-columns: 4.25rem minmax(0, 1fr) 2rem;
-  align-items: center;
-  gap: 0.625rem;
-}
-
-.census-method {
+.first-run-note code {
   font-family: var(--vp-font-family-mono);
   font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--vp-c-text-2);
-}
-
-/* Only DELETE is coloured, matching the reference tables. In this product it
-   rarely means "remove a row": deleting a deployment target stops an estate
-   being deployed to while every renewal carries on reporting success. */
-.census-method[data-method='DELETE'] { color: var(--cp-critical); }
-
-.census-bar {
-  margin: 0;
-  height: 3px;
-  background: var(--vp-c-divider);
-  overflow: hidden;
-}
-
-.census-bar > span {
-  display: block;
-  height: 100%;
-  background: var(--vp-c-brand-1);
-}
-
-.census-count {
-  margin: 0;
-  font-family: var(--vp-font-family-mono);
-  font-size: 0.8125rem;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
   color: var(--vp-c-text-1);
+}
+
+.first-run-more {
+  display: inline-block;
+  margin-top: 0.875rem;
+  font-size: 0.8125rem;
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
+}
+
+/* The brand colour clears 4.5:1 on the page background — a prose link measures
+   4.51:1 — but this panel sits on --vp-c-bg-alt, which is a shade darker, and
+   the same colour falls to 4.28:1 there. Darkened just enough to clear it,
+   rather than leaving the palette for a hardcoded hex. Light theme only: in
+   dark the same link measures 9.64:1. */
+:root:not(.dark) .first-run-more {
+  color: color-mix(in srgb, var(--vp-c-brand-1) 88%, black);
+}
+
+.first-run-more:hover {
+  text-decoration: underline;
+}
+
+.guide-blurb {
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  /* --vp-c-text-3 measures 4.07:1 against this surface, under the 4.5:1 that
+     text under 18.66px needs. Measured, not eyeballed — see the audit in the
+     pull request. text-2 clears it in both themes. */
+  color: var(--vp-c-text-2);
+  margin: 0.375rem 0 0.75rem;
 }
 
 /* ── Directory ───────────────────────────────────────────────────────────── */
@@ -376,7 +398,7 @@ const peak = Math.max(...census.methods.map((m) => m.count))
 /* ── Narrow ──────────────────────────────────────────────────────────────── */
 @media (max-width: 860px) {
   .home { padding: calc(var(--vp-nav-height) + 2rem) 1.25rem 4rem; }
-  .hero { grid-template-columns: 1fr; gap: 2.5rem; }
+  .hero { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
 }
 
 .guide-groups {
@@ -391,7 +413,10 @@ const peak = Math.max(...census.methods.map((m) => m.count))
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--vp-c-text-3);
+  /* --vp-c-text-3 measures 4.07:1 against this surface, under the 4.5:1 that
+     text under 18.66px needs. Measured, not eyeballed — see the audit in the
+     pull request. text-2 clears it in both themes. */
+  color: var(--vp-c-text-2);
 }
 
 .guide-list {

@@ -1,14 +1,41 @@
 [
   {
-    "text": "Start here",
+    "text": "Evaluate",
+    "blurb": "Whether CertPilot fits the estate you have, and what is actually built.",
     "items": [
       { "text": "Getting started", "link": "/getting-started" },
-      { "text": "Architecture", "link": "/architecture" }
+      { "text": "Architecture", "link": "/architecture" },
+      { "text": "Implementation status", "link": "/status" },
+      { "text": "Gateway compatibility", "link": "/compatibility" }
     ]
   },
   {
-    "text": "Supported platforms",
+    "text": "Deploy",
+    "blurb": "Standing up a control plane you run yourself, and the schema you apply deliberately.",
     "items": [
+      { "text": "Configuration", "link": "/configuration" },
+      { "text": "Database", "link": "/database" },
+      { "text": "Operations", "link": "/operations" },
+      { "text": "Security model", "link": "/security" }
+    ]
+  },
+  {
+    "text": "Operate",
+    "blurb": "The day-to-day: what it finds, what it tells you, and what to do when something breaks.",
+    "items": [
+      { "text": "Discovery", "link": "/discovery" },
+      { "text": "Monitoring and alerting", "link": "/monitoring" },
+      { "text": "Deployment", "link": "/deployment" },
+      { "text": "Certificate templates", "link": "/templates" },
+      { "text": "Cryptographic posture", "link": "/posture" },
+      { "text": "Troubleshooting", "link": "/troubleshooting" }
+    ]
+  },
+  {
+    "text": "Integrate",
+    "blurb": "Connecting CertPilot to the servers that serve certificates and the CAs that sign them.",
+    "items": [
+      { "text": "The host agent", "link": "/agent" },
       { "text": "All platforms", "link": "/platforms/" },
       { "text": "nginx", "link": "/platforms/nginx" },
       { "text": "Apache httpd", "link": "/platforms/apache" },
@@ -19,43 +46,26 @@
       { "text": "MariaDB and MySQL", "link": "/platforms/mariadb" },
       { "text": "Postfix", "link": "/platforms/postfix" },
       { "text": "Dovecot", "link": "/platforms/dovecot" },
-      { "text": "Microsoft IIS", "link": "/platforms/iis" }
-    ]
-  },
-  {
-    "text": "What it does",
-    "items": [
-      { "text": "Discovery", "link": "/discovery" },
-      { "text": "Monitoring and alerting", "link": "/monitoring" },
-      { "text": "Deployment", "link": "/deployment" },
-      { "text": "Certificate templates", "link": "/templates" },
-      { "text": "The host agent", "link": "/agent" },
-      { "text": "Cryptographic posture", "link": "/posture" }
-    ]
-  },
-  {
-    "text": "Certificate authorities",
-    "items": [
+      { "text": "Microsoft IIS", "link": "/platforms/iis" },
       { "text": "The Vault gateway", "link": "/gateways/vault" },
-      { "text": "Writing a gateway", "link": "/writing-a-gateway" },
-      { "text": "Gateway compatibility", "link": "/compatibility" }
+      { "text": "Writing a gateway", "link": "/writing-a-gateway" }
     ]
   },
   {
-    "text": "Running it",
+    "text": "Reference",
+    "blurb": "Every endpoint, generated from the router rather than written by hand.",
     "items": [
-      { "text": "Configuration", "link": "/configuration" },
-      { "text": "Operations", "link": "/operations" },
-      { "text": "Security model", "link": "/security" },
-      { "text": "Database", "link": "/database" },
-      { "text": "Troubleshooting", "link": "/troubleshooting" }
+      { "text": "API overview", "link": "/api/" },
+      { "text": "Authentication", "link": "/api/authentication" },
+      { "text": "Roles and permissions", "link": "/api/roles" }
     ]
   },
   {
-    "text": "Project",
+    "text": "Contribute",
+    "blurb": "Where the code lives, and what each repository is responsible for.",
     "items": [
-      { "text": "Implementation status", "link": "/status" },
-      { "text": "Repositories", "link": "/repositories" }
+      { "text": "Repositories", "link": "/repositories" },
+      { "text": "Writing a gateway", "link": "/writing-a-gateway" }
     ]
   }
 ]
