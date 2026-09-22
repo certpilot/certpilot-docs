@@ -440,3 +440,23 @@ input,
   line-height: 1.6;
   color: var(--vp-c-text-2);
 }
+
+/* ── Nav collapses at 960px, not 768px ──────────────────────────────────────
+ *
+ * VitePress shows the full nav bar from 768px up, which fits its own four-item
+ * default. This site's nav names the six reader journeys (#79), and six items
+ * plus the search box and the social link do not fit in 768px: measured over
+ * the DevTools protocol, the page scrolled to 901px inside a 768px viewport on
+ * every page, with `.VPNavBarMenu` as the culprit. The four-item nav this
+ * replaced did not overflow, so it was the new nav rather than anything else.
+ *
+ * Raising the breakpoint is the fix rather than shortening the labels: the
+ * hamburger and the nav screen already hold the same six entries and read
+ * better at tablet width than a cramped bar would. `!important` because the
+ * rules being overridden are scoped component styles that ship after this.
+ */
+@media (max-width: 959px) {
+  .VPNavBarMenu { display: none !important; }
+  .VPNavBarHamburger { display: flex !important; }
+  .VPNavScreen { display: block; }
+}

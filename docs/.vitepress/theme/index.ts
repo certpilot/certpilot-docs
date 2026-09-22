@@ -22,6 +22,7 @@ import '@fontsource-variable/ibm-plex-sans'
 import '@fontsource-variable/jetbrains-mono'
 
 import HomeIndex from './HomeIndex.vue'
+import MethodCensus from './MethodCensus.vue'
 import './custom.css'
 
 /*
@@ -95,5 +96,6 @@ export default {
   },
   enhanceApp({ app }) {
     app.component('HomeIndex', HomeIndex)
+    app.component('MethodCensus', MethodCensus)
   },
 } satisfies Theme

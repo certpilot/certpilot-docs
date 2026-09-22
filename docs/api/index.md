@@ -14,6 +14,8 @@ are under `/api/v1` and speak JSON.
 https://certpilot.example.com/api/v1
 ```
 
+<MethodCensus />
+
 ## The three callers
 
 The API is used by three quite different kinds of client, and they authenticate
