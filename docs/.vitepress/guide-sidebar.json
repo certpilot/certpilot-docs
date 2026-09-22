@@ -130,8 +130,16 @@
         "link": "/platforms/iis"
       },
       {
+        "text": "The ACME gateway",
+        "link": "/gateways/acme"
+      },
+      {
         "text": "The Vault gateway",
         "link": "/gateways/vault"
+      },
+      {
+        "text": "The self-signed gateway",
+        "link": "/gateways/selfsigned"
       },
       {
         "text": "Writing a gateway",
