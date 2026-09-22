@@ -451,11 +451,19 @@ input,
  * replaced did not overflow, so it was the new nav rather than anything else.
  *
  * Raising the breakpoint is the fix rather than shortening the labels: the
- * hamburger and the nav screen already hold the same six entries and read
- * better at tablet width than a cramped bar would. `!important` because the
- * rules being overridden are scoped component styles that ship after this.
+ * hamburger and the nav screen already hold the same entries and read better at
+ * tablet width than a cramped bar would. `!important` because the rules being
+ * overridden are scoped component styles that ship after this.
+ *
+ * 1099px, not 959px, since the walkthroughs became a seventh entry. Measured
+ * rather than guessed: the last item, "Contribute", ended at x=1081 at every
+ * width from 960 to 1024 — past the viewport, clipped, and unreachable. The
+ * bar first has room for seven at about 1100. This number is a property of how
+ * many entries the nav holds and how long their labels are, so it moves when
+ * either does; re-measure the right edge of the last item rather than
+ * assuming.
  */
-@media (max-width: 959px) {
+@media (max-width: 1099px) {
   .VPNavBarMenu { display: none !important; }
   .VPNavBarHamburger { display: flex !important; }
   .VPNavScreen { display: block; }

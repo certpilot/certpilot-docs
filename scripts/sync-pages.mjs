@@ -125,6 +125,16 @@ const PAGES = [
   // heading, because the Linux ones all share "## What CertPilot does" and a
   // sentinel that matches nine files cannot detect the one thing a sentinel is
   // for: getting a different page than the one asked for.
+  // The walkthroughs. Sentinels are the H1: they are the only headings on those
+  // pages that are not shared with a sibling — every one of them has a
+  // "Prerequisites" and a "Limitations".
+  { source: 'walkthroughs/README.md', sentinel: '# Walkthroughs' },
+  { source: 'walkthroughs/vault-nginx.md', sentinel: '# Vault to nginx' },
+  { source: 'walkthroughs/acme-nginx.md', sentinel: '# ACME to nginx' },
+  { source: 'walkthroughs/windows-iis.md', sentinel: '# Windows and IIS' },
+  { source: 'walkthroughs/ca-expiry.md', sentinel: '# A CA is expiring' },
+  { source: 'walkthroughs/failed-renewal.md', sentinel: '# A renewal or deployment failed' },
+
   { source: 'platforms/README.md', sentinel: '# Supported platforms', repo: AGENT },
   { source: 'platforms/nginx.md', sentinel: '# nginx', repo: AGENT },
   { source: 'platforms/apache.md', sentinel: '# Apache httpd', repo: AGENT },

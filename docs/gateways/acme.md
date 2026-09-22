@@ -65,7 +65,7 @@ make run-gateway-acme
 ```
 
 Then register it. The walkthrough with a real domain is in
-[Getting started](/getting-started#5-issue-from-a-real-ca); this page is the
+[Getting started](/getting-started#_5-issue-from-a-real-ca); this page is the
 reference for what goes in `config`.
 
 > These examples carry `-b "$JAR"`, a cookie jar from signing in. There is no

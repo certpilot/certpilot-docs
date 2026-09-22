@@ -26,6 +26,36 @@
     ]
   },
   {
+    "text": "Walk through it",
+    "blurb": "Five connected paths, end to end, with every command run rather than written from memory.",
+    "items": [
+      {
+        "text": "All walkthroughs",
+        "link": "/walkthroughs/"
+      },
+      {
+        "text": "Vault to nginx",
+        "link": "/walkthroughs/vault-nginx"
+      },
+      {
+        "text": "ACME to nginx",
+        "link": "/walkthroughs/acme-nginx"
+      },
+      {
+        "text": "Windows and IIS",
+        "link": "/walkthroughs/windows-iis"
+      },
+      {
+        "text": "A CA is expiring",
+        "link": "/walkthroughs/ca-expiry"
+      },
+      {
+        "text": "A renewal or deployment failed",
+        "link": "/walkthroughs/failed-renewal"
+      }
+    ]
+  },
+  {
     "text": "Deploy",
     "blurb": "Standing up a control plane you run yourself, and the schema you apply deliberately.",
     "items": [
