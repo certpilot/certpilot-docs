@@ -43,11 +43,12 @@ import guide from '../guide-sidebar.json'
           watched on the same clock as everything they sign.
         </p>
         <div class="hero-actions">
-          <a class="act act-primary" :href="withBase('/getting-started')">Get started</a>
+          <a class="act act-primary" :href="withBase('/evaluation')">Evaluate it</a>
           <!-- Before the endpoints, not after. Somebody who has not met
                CertPilot cannot use a route table yet, and this is the page that
                tells them what the processes are. -->
           <a class="act" :href="withBase('/architecture')">How it works</a>
+          <a class="act" :href="withBase('/getting-started')">Build from source</a>
           <a class="act" :href="withBase('/api/')">API reference</a>
         </div>
       </div>
@@ -57,18 +58,18 @@ import guide from '../guide-sidebar.json'
       <aside class="first-run" aria-labelledby="first-run-head">
         <p class="first-run-head" id="first-run-head">Start here</p>
         <div class="first-run-code">
-          <code>git clone https://github.com/certpilot/certpilot</code>
-          <code>cd certpilot &amp;&amp; make dev</code>
+          <code>base=https://raw.githubusercontent.com/certpilot/certpilot/v0.1.1/deploy</code>
+          <code>curl -O $base/docker-compose.quickstart.yml -O $base/config.quickstart.yaml</code>
+          <code>export CERTPILOT_VERSION=0.1.1 GATEWAY_VERSION=0.3.0</code>
+          <code>docker compose -f docker-compose.quickstart.yml up -d</code>
         </div>
         <p class="first-run-note">
-          Starts PostgreSQL, applies every migration, generates a development
-          key, runs the self-signed gateway and registers it as a CA — so there
-          is something to issue from on the first run. The console is then on
-          <code>localhost:3000</code>, and the administrator password is printed
-          once.
+          Docker and nothing else — no clone, no toolchain, no database to
+          provision, no account with any CA. Measured cold with nothing cached:
+          <strong>about 20 seconds</strong> to a console you can sign in to.
         </p>
-        <a class="first-run-more" :href="withBase('/getting-started')">
-          Issue a certificate, then point it at a real CA →
+        <a class="first-run-more" :href="withBase('/evaluation')">
+          Connect a CA, issue a certificate, renew it, put it back →
         </a>
       </aside>
     </header>
