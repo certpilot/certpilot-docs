@@ -1,9 +1,14 @@
 ---
 editLink: false
+lastUpdated: 2026-08-22T21:55:05Z
+source:
+  repo: certpilot/certpilot
+  path: docs/posture.md
+  commit: a8a11fb045ecbb4d968b48809a63d8fba5196d6e
 ---
 
-<!-- Synced from docs/posture.md in certpilot/certpilot by
-     scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/posture.md in certpilot/certpilot at a8a11fb045ec,
+     last changed 2026-08-22T21:55:05Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Cryptographic posture
 

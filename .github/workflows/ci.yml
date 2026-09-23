@@ -17,6 +17,16 @@ jobs:
       - run: npm run build
       - name: Verify every route is documented
         run: npm run check
+
+      # What a reader clicks, read from the built HTML rather than the markdown,
+      # because only the build knows how a heading was slugged. VitePress fails
+      # on a missing page and is silent on a missing heading; five links into
+      # headings that did not exist were live on the published site when this
+      # was added. Fails, rather than skipping, if the build produced nothing.
+      - name: Prove the link check fails on each kind of dead link
+        run: npm run test:checks
+      - name: Verify every link and anchor on the built site
+        run: npm run check:links
       - name: Verify the vendored route table is current
         run: npm run sync -- --check
 

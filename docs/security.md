@@ -1,9 +1,14 @@
 ---
 editLink: false
+lastUpdated: 2026-09-14T08:49:03Z
+source:
+  repo: certpilot/certpilot
+  path: docs/security.md
+  commit: 95b0481beab6b8ff0992e82b1bf81913c39620ba
 ---
 
-<!-- Synced from docs/security.md in certpilot/certpilot by
-     scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/security.md in certpilot/certpilot at 95b0481beab6,
+     last changed 2026-09-14T08:49:03Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Security model
 

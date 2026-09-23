@@ -1,9 +1,14 @@
 ---
 editLink: false
+lastUpdated: 2026-09-22T07:17:52Z
+source:
+  repo: certpilot/certpilot
+  path: docs/getting-started.md
+  commit: c66557cdeb536e9441985f2b46681a022864cdeb
 ---
 
-<!-- Synced from docs/getting-started.md in certpilot/certpilot by
-     scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/getting-started.md in certpilot/certpilot at c66557cdeb53,
+     last changed 2026-09-22T07:17:52Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Getting started
 

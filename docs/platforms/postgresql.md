@@ -1,9 +1,14 @@
 ---
 editLink: false
+lastUpdated: 2026-09-14T06:00:25Z
+source:
+  repo: certpilot/certpilot-agent
+  path: docs/platforms/postgresql.md
+  commit: a77399fb8fb867db48dbfd43325d9e74129e1142
 ---
 
-<!-- Synced from docs/platforms/postgresql.md in certpilot/certpilot-agent by
-     scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/platforms/postgresql.md in certpilot/certpilot-agent at a77399fb8fb8,
+     last changed 2026-09-14T06:00:25Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # PostgreSQL
 

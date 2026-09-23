@@ -36,25 +36,14 @@ if (missing.length || extra.length) {
   process.exit(1)
 }
 
-// Anchors are checked here because a build cannot catch them: VitePress
-// validates links between pages, but a link to a heading that no longer exists
-// on the same page renders fine and simply does not jump. In a table of 109
-// routes that is invisible until somebody clicks one.
-const built = join(root, 'docs/.vitepress/dist/api/reference')
-let brokenAnchors = 0
-try {
-  for (const file of readdirSync(built).filter((f) => f.endsWith('.html'))) {
-    const html = readFileSync(join(built, file), 'utf8')
-    const ids = new Set([...html.matchAll(/id="([^"]+)"/g)].map((m) => m[1]))
-    for (const [, anchor] of html.matchAll(/href="#([^"]+)"/g)) {
-      if (anchor === 'VPContent' || ids.has(anchor)) continue
-      console.error(`check-drift: ${file} links to #${anchor}, which does not exist`)
-      brokenAnchors++
-    }
-  }
-} catch {
-  console.log('check-drift: no build output — skipping the anchor check')
-}
-if (brokenAnchors) process.exit(1)
+// Anchors used to be checked here, over api/reference/ only, and the check
+// printed "skipping" and exited 0 whenever the build output was missing. Both
+// halves were wrong in a way that shipped: every dead anchor found since was
+// cross-page, which that loop never read, and a check that passes when it
+// could not run looks identical to one that ran and found nothing.
+//
+// scripts/check-built-links.mjs does it for every page and fails when there is
+// nothing to read. Kept out of this file so each script answers one question:
+// this one is "is every route documented", that one is "does every link land".
 
 console.log(`check-drift: all ${expected.length} routes documented`)

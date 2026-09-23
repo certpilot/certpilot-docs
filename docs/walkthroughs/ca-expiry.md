@@ -1,9 +1,14 @@
 ---
 editLink: false
+lastUpdated: 2026-09-22T22:16:14Z
+source:
+  repo: certpilot/certpilot
+  path: docs/walkthroughs/ca-expiry.md
+  commit: 644ae5280b83d4ad4c6949c0a936ee05c999e664
 ---
 
-<!-- Synced from docs/walkthroughs/ca-expiry.md in certpilot/certpilot by
-     scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/walkthroughs/ca-expiry.md in certpilot/certpilot at 644ae5280b83,
+     last changed 2026-09-22T22:16:14Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # A CA is expiring
 

@@ -1,9 +1,14 @@
 ---
 editLink: false
+lastUpdated: 2026-09-14T07:32:33Z
+source:
+  repo: certpilot/certpilot-agent
+  path: docs/platforms/tomcat.md
+  commit: 953f1ab60b1d38ec406b84b402cd929cde1ac4af
 ---
 
-<!-- Synced from docs/platforms/tomcat.md in certpilot/certpilot-agent by
-     scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/platforms/tomcat.md in certpilot/certpilot-agent at 953f1ab60b1d,
+     last changed 2026-09-14T07:32:33Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Apache Tomcat
 

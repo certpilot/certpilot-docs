@@ -26,6 +26,7 @@ import {
 } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { execFileSync } from 'node:child_process'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -327,6 +328,74 @@ async function load(repo, source, binary = false) {
 }
 
 const loadText = (repo, source) => load(repo, source)
+
+/*
+ * Which commit each page came from.
+ *
+ * A published page used to say which repository and file it came from and
+ * nothing about *when*. So a reader could not tell whether the page in front of
+ * them reflected last week's code or last year's, and a maintainer chasing a
+ * wrong claim could not tell which upstream revision had made it.
+ *
+ * The commit recorded is the last one that changed the page's source file — not
+ * the ref this run synced at. The ref moves with every upstream commit, and a
+ * page that recorded it would change, and fail `--check`, every time somebody
+ * merged anything upstream. The last commit to touch the file moves only when
+ * the file does, so an unchanged page stays byte-for-byte unchanged.
+ *
+ * The commit's date becomes the page's `lastUpdated`. Without it VitePress
+ * shows when *this* repository's copy was last written — the sync, not the
+ * change — which was a claim about freshness that the page could not back.
+ */
+async function provenance(repo, source) {
+  const { localDir, ref } = UPSTREAMS[repo]
+  if (localDir) {
+    const git = (...args) => {
+      try {
+        return execFileSync('git', ['-C', localDir, ...args], { encoding: 'utf8' }).trim()
+      } catch {
+        return ''
+      }
+    }
+    const last = git('log', '-1', '--format=%H%x09%cI', '--', source)
+    if (!last) {
+      console.error(
+        `sync-pages: ${join(localDir, source)} has no commit in its checkout, so there is ` +
+          `no revision to say it came from. Commit it before syncing.`,
+      )
+      process.exit(1)
+    }
+    const [commit, date] = last.split('\t')
+    // A local sync is for previewing. It is never committed here — `--check`
+    // compares against the remote, which never produces this — but when it is
+    // on screen it should not claim to be a commit it is not.
+    const dirty = git('status', '--porcelain', '--', source) !== ''
+    return { commit, date, dirty }
+  }
+
+  const path = ['docs', ...source.split('/')].map(encodeURIComponent).join('/')
+  const url = `https://api.github.com/repos/${repo}/commits?path=${path}&sha=${ref}&per_page=1`
+  const headers = { accept: 'application/vnd.github+json' }
+  if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`
+  const response = await fetch(url, { headers })
+  if (!response.ok) {
+    console.error(
+      `sync-pages: asking ${repo} which commit last changed docs/${source} returned ` +
+        `${response.status}` +
+        (response.status === 403 || response.status === 429
+          ? ' — most likely the unauthenticated rate limit. Set GITHUB_TOKEN.'
+          : ''),
+    )
+    process.exit(1)
+  }
+  const [latest] = await response.json()
+  if (!latest) {
+    console.error(`sync-pages: no commit on ${repo}@${ref} has ever changed docs/${source}`)
+    process.exit(1)
+  }
+  return { commit: latest.sha, date: latest.commit.committer.date, dirty: false }
+}
+
 const loadBinary = (repo, source) => load(repo, source, true)
 
 /*
@@ -501,14 +570,23 @@ for (const page of PAGES) {
     process.exit(1)
   }
 
+  const from = await provenance(page.repo, page.source)
   nextPages.set(
     fileFor(page.source),
     // editLink is switched off per page rather than globally: the button would
     // otherwise offer to edit this vendored copy, and that edit would be
     // overwritten by the next sync without anybody being told.
-    '---\neditLink: false\n---\n\n' +
-      `<!-- Synced from docs/${page.source} in ${page.repo} by\n` +
-      `     scripts/sync-pages.mjs. Edit it there, not here. -->\n\n` +
+    //
+    // `source` is the provenance, as data a theme component or a script can
+    // read; `lastUpdated` is its date, which VitePress shows in the footer.
+    '---\neditLink: false\n' +
+      `lastUpdated: ${from.date}\n` +
+      `source:\n  repo: ${page.repo}\n  path: docs/${page.source}\n  commit: ${from.commit}\n` +
+      (from.dirty ? '  uncommitted: true\n' : '') +
+      '---\n\n' +
+      `<!-- Synced from docs/${page.source} in ${page.repo} at ${from.commit.slice(0, 12)}` +
+      `${from.dirty ? ' plus uncommitted changes' : ''},\n` +
+      `     last changed ${from.date}, by scripts/sync-pages.mjs. Edit it there, not here. -->\n\n` +
       body.trimEnd() +
       '\n',
   )

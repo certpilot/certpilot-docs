@@ -1,9 +1,14 @@
 ---
 editLink: false
+lastUpdated: 2026-09-13T14:30:13Z
+source:
+  repo: certpilot/certpilot
+  path: docs/troubleshooting.md
+  commit: 5f54cebd6755bab9bfa3e16e948feed4956bb51d
 ---
 
-<!-- Synced from docs/troubleshooting.md in certpilot/certpilot by
-     scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/troubleshooting.md in certpilot/certpilot at 5f54cebd6755,
+     last changed 2026-09-13T14:30:13Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Troubleshooting
 
