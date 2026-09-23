@@ -20,6 +20,7 @@
 //   CERTPILOT_GUIDE_PATH=../pki_project/docs/api-reference.md node scripts/sync-guides.mjs
 
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -182,7 +183,41 @@ async function load() {
   return response.text()
 }
 
+/*
+ * Which commit the guides came from — see provenance() in sync-pages.mjs for
+ * why it is the last commit to change api-reference.md rather than the ref this
+ * run read at. Recorded in each guide's header, where a maintainer tracing a
+ * claim back to its source will look.
+ */
+async function provenance() {
+  if (localPath) {
+    try {
+      const out = execFileSync('git', ['-C', dirname(localPath), 'log', '-1', '--format=%H%x09%cI', '--', localPath.split('/').pop()],
+        { encoding: 'utf8' }).trim()
+      if (out) {
+        const [commit, date] = out.split('\t')
+        return { commit, date }
+      }
+    } catch {}
+    return null
+  }
+  // A caller-supplied URL could be anything; there is no commit to name for it.
+  if (process.env.CERTPILOT_GUIDE_URL) return null
+  const url = `https://api.github.com/repos/certpilot/certpilot/commits?path=docs/api-reference.md&sha=${REF}&per_page=1`
+  const headers = { accept: 'application/vnd.github+json' }
+  if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`
+  const response = await fetch(url, { headers })
+  if (!response.ok) {
+    console.error(`sync-guides: asking which commit last changed api-reference.md returned ${response.status}` +
+      (response.status === 403 || response.status === 429 ? ' — set GITHUB_TOKEN' : ''))
+    process.exit(1)
+  }
+  const [latest] = await response.json()
+  return latest ? { commit: latest.sha, date: latest.commit.committer.date } : null
+}
+
 const markdown = await load()
+const from = await provenance()
 
 // A 404 page served with a 200 would otherwise replace every guide with an
 // HTML error document, and only fail later during the build.
@@ -292,7 +327,8 @@ const next = new Map()
 for (const [name, { section, heading, body }] of written) {
   next.set(
     `${name}.md`,
-    `<!-- Synced from docs/api-reference.md in the CertPilot repository.\n` +
+    `<!-- Synced from docs/api-reference.md in certpilot/certpilot` +
+      (from ? ` at ${from.commit.slice(0, 12)}, last changed ${from.date}` : '') + `.\n` +
       `     Source heading: "${heading}". Edit it there, not here. -->\n\n${body}\n`,
   )
 }

@@ -1,9 +1,14 @@
 ---
 editLink: false
+lastUpdated: 2026-09-22T07:37:13Z
+source:
+  repo: certpilot/certpilot
+  path: docs/repositories.md
+  commit: da9423f87e1a52249cf9d42a7a2a8d04e5413775
 ---
 
-<!-- Synced from docs/repositories.md in certpilot/certpilot by
-     scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/repositories.md in certpilot/certpilot at da9423f87e1a,
+     last changed 2026-09-22T07:37:13Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Repositories
 

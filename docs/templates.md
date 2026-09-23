@@ -1,9 +1,14 @@
 ---
 editLink: false
+lastUpdated: 2026-09-21T21:48:46Z
+source:
+  repo: certpilot/certpilot
+  path: docs/templates.md
+  commit: 9e9a566000099c09d1f96546a3b48910ca0fa6db
 ---
 
-<!-- Synced from docs/templates.md in certpilot/certpilot by
-     scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/templates.md in certpilot/certpilot at 9e9a56600009,
+     last changed 2026-09-21T21:48:46Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Certificate templates
 

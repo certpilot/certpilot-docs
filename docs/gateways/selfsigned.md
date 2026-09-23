@@ -1,9 +1,14 @@
 ---
 editLink: false
+lastUpdated: 2026-09-23T06:59:39Z
+source:
+  repo: certpilot/certpilot
+  path: docs/gateways/selfsigned.md
+  commit: bc8c475b00fd7bb7c04dfb24906aabe8b3b80646
 ---
 
-<!-- Synced from docs/gateways/selfsigned.md in certpilot/certpilot by
-     scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/gateways/selfsigned.md in certpilot/certpilot at bc8c475b00fd,
+     last changed 2026-09-23T06:59:39Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # The self-signed gateway
 
@@ -57,7 +62,7 @@ for it.
 Those are reported honestly rather than stubbed, so the core knows not to offer
 a revoke button that would do nothing. A certificate issued here can still be
 deleted from the inventory; see
-[Delete — not a substitute for revoking](/operations#delete-not-a-substitute-for-revoking).
+[Delete — not a substitute for revoking](/operations#delete-—-not-a-substitute-for-revoking).
 
 ---
 

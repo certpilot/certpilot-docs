@@ -1,9 +1,14 @@
 ---
 editLink: false
+lastUpdated: 2026-09-14T08:49:03Z
+source:
+  repo: certpilot/certpilot-agent
+  path: docs/agent.md
+  commit: db3c4491330a1213f0c247b11568c90027a801f3
 ---
 
-<!-- Synced from docs/agent.md in certpilot/certpilot-agent by
-     scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/agent.md in certpilot/certpilot-agent at db3c4491330a,
+     last changed 2026-09-14T08:49:03Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # The host agent
 

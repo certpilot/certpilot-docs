@@ -1,4 +1,4 @@
-<!-- Synced from docs/api-reference.md in the CertPilot repository.
+<!-- Synced from docs/api-reference.md in certpilot/certpilot at 9e9a56600009, last changed 2026-09-21T21:48:46Z.
      Source heading: "Cloud inventory". Edit it there, not here. -->
 
 The third place certificates hide. A scan finds what is **served**; Certificate

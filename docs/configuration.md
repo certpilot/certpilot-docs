@@ -1,9 +1,14 @@
 ---
 editLink: false
+lastUpdated: 2026-09-12T09:27:16Z
+source:
+  repo: certpilot/certpilot
+  path: docs/configuration.md
+  commit: 206730a0d7a6647ae37fdbc61833d271c492dc6c
 ---
 
-<!-- Synced from docs/configuration.md in certpilot/certpilot by
-     scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/configuration.md in certpilot/certpilot at 206730a0d7a6,
+     last changed 2026-09-12T09:27:16Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Configuration reference
 

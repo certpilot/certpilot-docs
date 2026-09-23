@@ -13,7 +13,9 @@
     "sync": "node scripts/sync-routes.mjs",
     "sync:guides": "node scripts/sync-guides.mjs",
     "sync:pages": "node scripts/sync-pages.mjs",
-    "check": "node scripts/check-drift.mjs"
+    "check": "node scripts/check-drift.mjs",
+    "check:links": "node scripts/check-built-links.mjs",
+    "test:checks": "node scripts/test-check-built-links.mjs"
   },
   "devDependencies": {
     "vitepress": "^1.6.3"

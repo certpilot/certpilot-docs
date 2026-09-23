@@ -105,10 +105,11 @@ export default withMermaid(
         },
         {
           text: 'Contribute',
-          activeMatch: '^/repositories',
+          activeMatch: '^/(repositories|documentation-checks)',
           items: [
             { text: 'Repositories', link: '/repositories' },
             { text: 'Writing a gateway', link: '/writing-a-gateway' },
+            { text: 'Documentation checks', link: '/documentation-checks' },
             { text: 'Source on GitHub', link: CODE },
           ],
         },
