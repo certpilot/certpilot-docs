@@ -72,17 +72,23 @@ export default withMermaid(
       outline: { level: [2, 3], label: 'On this page' },
 
       /*
-       * The six journeys, not the six topics.
+       * The journeys, not the topics.
        *
        * "Guide / API / Endpoints" described how this site is *built*. A PKI
-       * team arriving here is at one of six points instead: working out
-       * whether this fits, standing it up, running it, wiring it to their
-       * estate, looking something up, or changing it. Each entry below lands
-       * on the first page of that journey, and the sidebar under it is the
-       * rest of the same journey.
+       * team arriving here is at one of these points instead: working out
+       * whether this fits, following a path end to end, standing it up,
+       * running it, wiring it to their estate, looking something up, or
+       * changing it. Each entry below lands on the first page of that journey,
+       * and the sidebar under it is the rest of the same journey.
+       *
+       * "Walkthroughs" rather than the sidebar's "Walk through it": the nav bar
+       * is the one place where a label's width is load-bearing, and seven
+       * entries have to fit above the 960px point where this collapses to a
+       * hamburger.
        */
       nav: [
-        { text: 'Evaluate', link: '/getting-started', activeMatch: '^/(getting-started|architecture|status|compatibility)' },
+        { text: 'Evaluate', link: '/evaluation', activeMatch: '^/(evaluation|getting-started|architecture|status|compatibility)' },
+        { text: 'Walkthroughs', link: '/walkthroughs/', activeMatch: '^/walkthroughs' },
         { text: 'Deploy', link: '/configuration', activeMatch: '^/(configuration|database|operations|security)' },
         { text: 'Operate', link: '/discovery', activeMatch: '^/(discovery|monitoring|deployment|templates|posture|troubleshooting)' },
         { text: 'Integrate', link: '/agent', activeMatch: '^/(agent|platforms|gateways|writing-a-gateway)' },
