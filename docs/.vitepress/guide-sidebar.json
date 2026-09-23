@@ -197,7 +197,7 @@
   },
   {
     "text": "Contribute",
-    "blurb": "Where the code lives, and what each repository is responsible for.",
+    "blurb": "Where the code lives, what each repository is responsible for, and how the documentation is checked against it.",
     "items": [
       {
         "text": "Repositories",
@@ -206,6 +206,10 @@
       {
         "text": "Writing a gateway",
         "link": "/writing-a-gateway"
+      },
+      {
+        "text": "Documentation checks",
+        "link": "/documentation-checks"
       }
     ]
   }

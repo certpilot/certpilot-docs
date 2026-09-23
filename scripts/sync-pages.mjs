@@ -114,6 +114,7 @@ const PAGES = [
   // merge in the same instant. The table header is in both.
   { source: 'compatibility.md', sentinel: '| Gateway | Version | Contract |' },
   { source: 'repositories.md', sentinel: '# Repositories' },
+  { source: 'documentation-checks.md', sentinel: '# Documentation checks' },
   { source: 'configuration.md', sentinel: '# Configuration reference' },
   { source: 'operations.md', sentinel: '# Operations' },
   { source: 'security.md', sentinel: '# Security model' },
@@ -122,10 +123,6 @@ const PAGES = [
   { source: 'status.md', sentinel: '# Implementation status' },
   { source: 'templates.md', sentinel: '# Certificate templates' },
 
-  // The platform pages. Their sentinels are the H1 rather than a section
-  // heading, because the Linux ones all share "## What CertPilot does" and a
-  // sentinel that matches nine files cannot detect the one thing a sentinel is
-  // for: getting a different page than the one asked for.
   // The walkthroughs. Sentinels are the H1: they are the only headings on those
   // pages that are not shared with a sibling — every one of them has a
   // "Prerequisites" and a "Limitations".
@@ -136,6 +133,10 @@ const PAGES = [
   { source: 'walkthroughs/ca-expiry.md', sentinel: '# A CA is expiring' },
   { source: 'walkthroughs/failed-renewal.md', sentinel: '# A renewal or deployment failed' },
 
+  // The platform pages. Their sentinels are the H1 rather than a section
+  // heading, because the Linux ones all share "## What CertPilot does" and a
+  // sentinel that matches nine files cannot detect the one thing a sentinel is
+  // for: getting a different page than the one asked for.
   { source: 'platforms/README.md', sentinel: '# Supported platforms', repo: AGENT },
   { source: 'platforms/nginx.md', sentinel: '# nginx', repo: AGENT },
   { source: 'platforms/apache.md', sentinel: '# Apache httpd', repo: AGENT },
