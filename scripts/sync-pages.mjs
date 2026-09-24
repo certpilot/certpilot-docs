@@ -97,6 +97,7 @@ const check = process.argv.includes('--check')
  */
 const PAGES = [
   { source: 'evaluation.md', sentinel: '## 1. Start it' },
+  { source: 'comparison.md', sentinel: '# How CertPilot compares' },
   { source: 'getting-started.md', sentinel: '## 1. Generate development keys' },
   { source: 'architecture.md', sentinel: '## Decision 1 — a gateway is a process, not a package' },
   { source: 'discovery.md', sentinel: '## Certificate Transparency' },

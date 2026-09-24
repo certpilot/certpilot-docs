@@ -87,7 +87,7 @@ export default withMermaid(
        * hamburger.
        */
       nav: [
-        { text: 'Evaluate', link: '/evaluation', activeMatch: '^/(evaluation|getting-started|architecture|status|compatibility)' },
+        { text: 'Evaluate', link: '/evaluation', activeMatch: '^/(evaluation|comparison|getting-started|architecture|status|compatibility)' },
         { text: 'Walkthroughs', link: '/walkthroughs/', activeMatch: '^/walkthroughs' },
         { text: 'Deploy', link: '/configuration', activeMatch: '^/(configuration|database|operations|security)' },
         { text: 'Operate', link: '/discovery', activeMatch: '^/(discovery|monitoring|deployment|templates|posture|troubleshooting)' },
