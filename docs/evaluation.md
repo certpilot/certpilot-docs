@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-22T22:16:14Z
+lastUpdated: 2026-09-24T21:03:20Z
 source:
   repo: certpilot/certpilot
   path: docs/evaluation.md
-  commit: 644ae5280b83d4ad4c6949c0a936ee05c999e664
+  commit: 3d0a4bbf19f28a3596cfcd41d01eccb8b32df74b
 ---
 
-<!-- Synced from docs/evaluation.md in certpilot/certpilot at 644ae5280b83,
-     last changed 2026-09-22T22:16:14Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/evaluation.md in certpilot/certpilot at 3d0a4bbf19f2,
+     last changed 2026-09-24T21:03:20Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Evaluate CertPilot
 
@@ -257,3 +257,10 @@ stack does the wrong way on purpose:
 
 `deploy/docker-compose.yml` and `deploy/config.production.example.yaml` are the
 files to start from for that, and [operations](/operations) is the page.
+
+## Whether it is the right tool at all
+
+[How CertPilot compares](/comparison) puts it beside Keyfactor Command, Palo
+Alto Networks' Next-Generation Trust Security and DigiCert Trust Lifecycle
+Manager. It uses only what each vendor documents, dates every source, and says
+when one of them fits better than this does.

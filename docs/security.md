@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-14T08:49:03Z
+lastUpdated: 2026-09-24T21:03:20Z
 source:
   repo: certpilot/certpilot
   path: docs/security.md
-  commit: 95b0481beab6b8ff0992e82b1bf81913c39620ba
+  commit: 3d0a4bbf19f28a3596cfcd41d01eccb8b32df74b
 ---
 
-<!-- Synced from docs/security.md in certpilot/certpilot at 95b0481beab6,
-     last changed 2026-09-14T08:49:03Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/security.md in certpilot/certpilot at 3d0a4bbf19f2,
+     last changed 2026-09-24T21:03:20Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Security model
 
@@ -530,8 +530,9 @@ internally consistent. Detecting either needs the head tag published somewhere
 append-only — a second system, an object-lock bucket, a printed page — on a
 schedule. Not built.
 
-**Key Vault and F5 deployers are unit-tested only.** Written to their published
-APIs; never run against a real vault or appliance.
+**The AWS ACM, Key Vault and F5 deployers are tested against fakes only.**
+Written to their published APIs; never run against a real AWS account, vault or
+appliance.
 
 **The KEK is held in the core's memory.** It can now be loaded from a file or
 from Vault rather than an environment variable, but wherever it comes from the
