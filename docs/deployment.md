@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-21T21:48:46Z
+lastUpdated: 2026-09-24T21:03:20Z
 source:
   repo: certpilot/certpilot
   path: docs/deployment.md
-  commit: 9e9a566000099c09d1f96546a3b48910ca0fa6db
+  commit: 3d0a4bbf19f28a3596cfcd41d01eccb8b32df74b
 ---
 
-<!-- Synced from docs/deployment.md in certpilot/certpilot at 9e9a56600009,
-     last changed 2026-09-21T21:48:46Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/deployment.md in certpilot/certpilot at 3d0a4bbf19f2,
+     last changed 2026-09-24T21:03:20Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Deployment
 
@@ -140,6 +140,10 @@ from the one asked for.
 
 SigV4 is signed by hand ([`core/engine/cloudsync/sigv4.go`](https://github.com/certpilot/certpilot/blob/main/core/engine/cloudsync/sigv4.go)).
 There is no AWS SDK anywhere in this project.
+
+> Tested against a fake that answers the way ACM does. Nothing in this
+> repository or its CI holds an AWS credential, so AWS itself has never checked
+> one of these signatures.
 
 ### azure_key_vault
 
