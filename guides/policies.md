@@ -1,4 +1,4 @@
-<!-- Synced from docs/api-reference.md in certpilot/certpilot at 9e9a56600009, last changed 2026-09-21T21:48:46Z.
+<!-- Synced from docs/api-reference.md in certpilot/certpilot at 81031950a7b7, last changed 2026-09-26T11:56:08Z.
      Source heading: "Policies". Edit it there, not here. -->
 
 Rule types, all of which are evaluated:
