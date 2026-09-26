@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-24T21:03:20Z
+lastUpdated: 2026-09-26T11:47:57Z
 source:
   repo: certpilot/certpilot
   path: docs/comparison.md
-  commit: 3d0a4bbf19f28a3596cfcd41d01eccb8b32df74b
+  commit: 94932e842226a1e302328cff33528fd9cb5c1d5f
 ---
 
-<!-- Synced from docs/comparison.md in certpilot/certpilot at 3d0a4bbf19f2,
-     last changed 2026-09-24T21:03:20Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/comparison.md in certpilot/certpilot at 94932e842226,
+     last changed 2026-09-26T11:47:57Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # How CertPilot compares
 
@@ -135,7 +135,7 @@ Where the private key is generated, and whether the platform can hold it.
 
 | | What is documented |
 |:--|:--|
-| CertPilot | ✅ The host agent generates keys on the host and never sends them. The Vault gateway signs CSRs by preference. ✅ Keys CertPilot does generate are sealed with AES-256-GCM envelope encryption before they reach the database. ⚠️ Known defect: renewing an agent-held certificate by hand makes CertPilot generate and hold a key for it ([#107](https://github.com/certpilot/certpilot/issues/107)). The key encryption key lives in the core's memory, with no HSM or KMS unwrapping. See [status](/status) and [security](/security) |
+| CertPilot | ✅ The host agent generates keys on the host and never sends them. The Vault gateway signs CSRs by preference. ✅ Keys CertPilot does generate are sealed with AES-256-GCM envelope encryption before they reach the database. A certificate whose key is on a host or behind a signing request is never renewed by the core, which would mean generating a key for it; that is refused. The key encryption key lives in the core's memory, with no HSM or KMS unwrapping. See [status](/status) and [security](/security) |
 | Keyfactor | Both models. PFX enrolment requires "one of the Private Key Retention options" on the template ([K4](#sources)). On-device key generation provides "the ability to enroll for a certificate using a private key" ([K11](#sources)) "generated on the target hosting the certificate store" ([K5](#sources)) |
 | NGTS | SaaS, with Automated Secure Keypair: "The VSatellite generates a key pair and a CSR" ([V4](#sources)) in your environment, and "Venafi cannot decrypt private keys that are stored in Certificate Manager - SaaS" ([V5](#sources)). That service is "included in Certificate Manager - SaaS premium packages by default" ([V6](#sources)). Self-Hosted: key storage was not reviewed |
 | DigiCert | "An agent can generate a key pair and securely deliver a certificate to a server" ([D3](#sources)). A Recovery manager role exists to "Recover escrowed certificates" ([D5](#sources)) |

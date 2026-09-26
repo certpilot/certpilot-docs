@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-22T22:16:14Z
+lastUpdated: 2026-09-26T11:47:57Z
 source:
   repo: certpilot/certpilot
   path: docs/walkthroughs/vault-nginx.md
-  commit: 644ae5280b83d4ad4c6949c0a936ee05c999e664
+  commit: 94932e842226a1e302328cff33528fd9cb5c1d5f
 ---
 
-<!-- Synced from docs/walkthroughs/vault-nginx.md in certpilot/certpilot at 644ae5280b83,
-     last changed 2026-09-22T22:16:14Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/walkthroughs/vault-nginx.md in certpilot/certpilot at 94932e842226,
+     last changed 2026-09-26T11:47:57Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Vault to nginx
 
@@ -349,11 +349,12 @@ on each cycle and asks for a replacement when it has passed.
 
 So there is nothing to schedule. Leave `certpilot-agent run` up.
 
-> **Do not use `POST /certificates/:id/renew` on one of these.** It is accepted, it
-> succeeds, and it is wrong in three ways at once: CertPilot ends up holding a private
-> key for a certificate whose `key_custody` still says `AGENT`, the record stops
-> describing what the host is serving, and the replacement can be *shorter* than the
-> original. [#107](https://github.com/certpilot/certpilot/issues/107), open.
+> **`POST /certificates/:id/renew` refuses one of these, with `400`.** It used to be
+> accepted, and it was wrong in three ways at once: CertPilot ended up holding a private
+> key for a certificate whose `key_custody` still said `AGENT`, the record stopped
+> describing what the host was serving, and the replacement could be *shorter* than the
+> original ([#107](https://github.com/certpilot/certpilot/issues/107)). The refusal names
+> the agent that holds the key.
 
 To force a renewal before `renew_after`, do it from the host — `certpilot-agent request`
 with the same name replaces what it holds.

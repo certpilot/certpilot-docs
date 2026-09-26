@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-22T22:16:14Z
+lastUpdated: 2026-09-26T11:47:57Z
 source:
   repo: certpilot/certpilot
   path: docs/walkthroughs/acme-nginx.md
-  commit: 644ae5280b83d4ad4c6949c0a936ee05c999e664
+  commit: 94932e842226a1e302328cff33528fd9cb5c1d5f
 ---
 
-<!-- Synced from docs/walkthroughs/acme-nginx.md in certpilot/certpilot at 644ae5280b83,
-     last changed 2026-09-22T22:16:14Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/walkthroughs/acme-nginx.md in certpilot/certpilot at 94932e842226,
+     last changed 2026-09-26T11:47:57Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # ACME to nginx
 
@@ -271,8 +271,8 @@ curl -b "$JAR" localhost:8080/api/v1/agent-installations
 
 ## Renewal
 
-As with Vault, **the host renews this**, and `POST /certificates/:id/renew` should not
-be used on it ([#107](https://github.com/certpilot/certpilot/issues/107)).
+As with Vault, **the host renews this**, and `POST /certificates/:id/renew` refuses it
+with `400` ([#107](https://github.com/certpilot/certpilot/issues/107)).
 
 One thing is specific to ACME. A CA that publishes **renewal information** (RFC 9773) is
 telling you when *it* wants the certificate replaced, and the gateway reports that
