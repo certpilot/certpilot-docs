@@ -1,4 +1,4 @@
-<!-- Synced from docs/api-reference.md in certpilot/certpilot at 81031950a7b7, last changed 2026-09-26T11:56:08Z.
+<!-- Synced from docs/api-reference.md in certpilot/certpilot at 51f86f743471, last changed 2026-09-26T16:23:02Z.
      Source heading: "Notification channels". Edit it there, not here. -->
 
 Three channel types have a notifier: `slack`, `webhook`, `email`. Migration 001

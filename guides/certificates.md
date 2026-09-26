@@ -1,4 +1,4 @@
-<!-- Synced from docs/api-reference.md in certpilot/certpilot at 81031950a7b7, last changed 2026-09-26T11:56:08Z.
+<!-- Synced from docs/api-reference.md in certpilot/certpilot at 51f86f743471, last changed 2026-09-26T16:23:02Z.
      Source heading: "Certificates". Edit it there, not here. -->
 
 `GET /certificates` filters on `status`, `environment`, `common_name`,
@@ -51,8 +51,12 @@ a policy that finds something must say so even when it does not block.
 
 ## Renewing
 
-`POST /certificates/:id/renew` runs the same path. The key is rotated and the
-new one persisted; a renewal that produced a certificate without storing its
+`POST /certificates/:id/renew` runs the same path, and asks the CA for the same
+lifetime: the template's `validity_days`, or the certificate's own when the
+template names none. Before
+[#102](https://github.com/certpilot/certpilot/issues/102) a renewal asked for
+nothing, and a 90-day certificate could come back lasting a year. The key is
+rotated and the new one persisted; a renewal that produced a certificate without storing its
 matching key would leave a record that looks healthy and cannot terminate TLS.
 That is only possible for a key CertPilot already holds: a certificate whose
 `key_custody` is `AGENT` or `EXTERNAL` is refused with `400`, and renewed by
