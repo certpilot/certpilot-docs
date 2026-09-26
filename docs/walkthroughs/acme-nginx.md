@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-26T11:52:04Z
+lastUpdated: 2026-09-26T11:56:08Z
 source:
   repo: certpilot/certpilot
   path: docs/walkthroughs/acme-nginx.md
-  commit: 73297a86d773ab29a6ce22e75c6e4b7db75a559f
+  commit: 81031950a7b753209504910127b5bbffff8a841c
 ---
 
-<!-- Synced from docs/walkthroughs/acme-nginx.md in certpilot/certpilot at 73297a86d773,
-     last changed 2026-09-26T11:52:04Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/walkthroughs/acme-nginx.md in certpilot/certpilot at 81031950a7b7,
+     last changed 2026-09-26T11:56:08Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # ACME to nginx
 
@@ -205,18 +205,15 @@ That is a correct, modern certificate: the Baseline Requirements mark
 Let's Encrypt still populates it today.
 
 CertPilot records it accurately — `common_name` empty, `sans` holding the name — and
-then cannot find it:
+finds it by that name, because the name filter matches the SANs as well as the column:
 
 ```bash
 curl -b "$JAR" 'localhost:8080/api/v1/certificates?common_name=shop.example.com'
 ```
 
-```
-hits: 0
-```
-
-It lists as a blank row, too. [#108](https://github.com/certpilot/certpilot/issues/108),
-open. Until it is fixed, list without the filter and match on `sans`.
+The console lists it by its first SAN. Before
+[#108](https://github.com/certpilot/certpilot/issues/108) was fixed, that query found
+nothing and the row was blank.
 
 **The certificate may be much shorter than you expect.** ACME CAs increasingly offer
 short-lived profiles; Pebble issued six days here without being asked. The renewal lead
