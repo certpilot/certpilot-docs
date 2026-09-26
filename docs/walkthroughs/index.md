@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-26T11:47:57Z
+lastUpdated: 2026-09-26T11:52:04Z
 source:
   repo: certpilot/certpilot
   path: docs/walkthroughs/README.md
-  commit: 94932e842226a1e302328cff33528fd9cb5c1d5f
+  commit: 73297a86d773ab29a6ce22e75c6e4b7db75a559f
 ---
 
-<!-- Synced from docs/walkthroughs/README.md in certpilot/certpilot at 94932e842226,
-     last changed 2026-09-26T11:47:57Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/walkthroughs/README.md in certpilot/certpilot at 73297a86d773,
+     last changed 2026-09-26T11:52:04Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Walkthroughs
 
@@ -78,8 +78,9 @@ linked from the step that hits it:
   agent-held certificate made CertPilot hold its private key. The core now refuses it.
 - [#108](https://github.com/certpilot/certpilot/issues/108), open — a SAN-only
   certificate cannot be found by name.
-- [#109](https://github.com/certpilot/certpilot/issues/109), open — a certificate shorter
-  than the renewal lead time renews on every agent cycle.
+- [#109](https://github.com/certpilot/certpilot/issues/109), fixed — a certificate
+  shorter than the renewal lead time renewed on every agent cycle. The lead time is now
+  bounded by the certificate's own lifetime.
 
 ## Before any of them
 

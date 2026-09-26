@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-26T11:47:57Z
+lastUpdated: 2026-09-26T11:52:04Z
 source:
   repo: certpilot/certpilot
   path: docs/walkthroughs/acme-nginx.md
-  commit: 94932e842226a1e302328cff33528fd9cb5c1d5f
+  commit: 73297a86d773ab29a6ce22e75c6e4b7db75a559f
 ---
 
-<!-- Synced from docs/walkthroughs/acme-nginx.md in certpilot/certpilot at 94932e842226,
-     last changed 2026-09-26T11:47:57Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/walkthroughs/acme-nginx.md in certpilot/certpilot at 73297a86d773,
+     last changed 2026-09-26T11:52:04Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # ACME to nginx
 
@@ -219,12 +219,11 @@ It lists as a blank row, too. [#108](https://github.com/certpilot/certpilot/issu
 open. Until it is fixed, list without the filter and match on `sans`.
 
 **The certificate may be much shorter than you expect.** ACME CAs increasingly offer
-short-lived profiles; Pebble issued six days here without being asked. If what you get
-is shorter than the renewal lead time — 30 days by default — the host renews it on
-*every* cycle, ordering a new certificate from the CA every five minutes.
-[#109](https://github.com/certpilot/certpilot/issues/109), open. Set
-`renew_before_days` on the template to something inside the certificate's own lifetime
-until it is fixed.
+short-lived profiles; Pebble issued six days here without being asked. The renewal lead
+time, 30 days by default, is bounded by the certificate's own lifetime, so a six-day
+certificate renews once, at day four. Before that bound, a certificate shorter than its
+lead time renewed on *every* cycle, ordering a new certificate from the CA every five
+minutes ([#109](https://github.com/certpilot/certpilot/issues/109)).
 
 ## Steps 7 and 8: install, and point nginx at it
 

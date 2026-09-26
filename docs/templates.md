@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-21T21:48:46Z
+lastUpdated: 2026-09-26T11:52:04Z
 source:
   repo: certpilot/certpilot
   path: docs/templates.md
-  commit: 9e9a566000099c09d1f96546a3b48910ca0fa6db
+  commit: 73297a86d773ab29a6ce22e75c6e4b7db75a559f
 ---
 
-<!-- Synced from docs/templates.md in certpilot/certpilot at 9e9a56600009,
-     last changed 2026-09-21T21:48:46Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/templates.md in certpilot/certpilot at 73297a86d773,
+     last changed 2026-09-26T11:52:04Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Certificate templates
 
@@ -94,6 +94,7 @@ somebody else's name.
 | `key_custody_required` | `ANY`, `CERTPILOT`, `AGENT`, `EXTERNAL` |
 | `validity_days` | Supplied. The requester does not choose |
 | `max_validity_days` | The ceiling, for when they may |
+| `renew_before_days` | How long before expiry to renew. Bounded by the certificate's own lifetime: a lead longer than two thirds of it renews when a third remains instead, so a six-day certificate under the default 30 renews at day four rather than the moment it is issued. A lead that fits is kept exactly |
 | `require_metadata` | Which `metadata_fields` a request must answer. Per-template, unlike the estate-wide `is_required` |
 | `ca_profile` | The CA's own template — a Vault role, an ACME profile (draft-ietf-acme-profiles), an AWS Private CA template ARN. Empty means the account's default |
 | `key_usage`, `extended_key_usage` | Declared key usage, in RFC 5280's own field names (`digitalSignature`, `serverAuth`, ...). Enforced where a gateway builds the certificate itself; elsewhere refused at save time if this deployment cannot make the CA produce it — see [below](#ca-profiles-key-usage-and-what-actually-enforces-them) |
