@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-22T22:16:14Z
+lastUpdated: 2026-09-26T16:23:02Z
 source:
   repo: certpilot/certpilot
   path: docs/gateways/acme.md
-  commit: 644ae5280b83d4ad4c6949c0a936ee05c999e664
+  commit: 51f86f743471b396830863eeb47a93b0947e281a
 ---
 
-<!-- Synced from docs/gateways/acme.md in certpilot/certpilot at 644ae5280b83,
-     last changed 2026-09-22T22:16:14Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/gateways/acme.md in certpilot/certpilot at 51f86f743471,
+     last changed 2026-09-26T16:23:02Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # The ACME gateway
 
@@ -221,7 +221,7 @@ the image contains. Pin it anyway.
 To check a build against the contract — including one you wrote yourself:
 
 ```bash
-go run github.com/certpilot/certpilot-gateway-sdk/cmd/conformance@v0.3.0 \
+go run github.com/certpilot/certpilot-gateway-sdk/cmd/conformance@v0.4.0 \
     -addr localhost:9092 -insecure
 ```
 

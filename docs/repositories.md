@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-22T07:37:13Z
+lastUpdated: 2026-09-26T16:23:02Z
 source:
   repo: certpilot/certpilot
   path: docs/repositories.md
-  commit: da9423f87e1a52249cf9d42a7a2a8d04e5413775
+  commit: 51f86f743471b396830863eeb47a93b0947e281a
 ---
 
-<!-- Synced from docs/repositories.md in certpilot/certpilot at da9423f87e1a,
-     last changed 2026-09-22T07:37:13Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/repositories.md in certpilot/certpilot at 51f86f743471,
+     last changed 2026-09-26T16:23:02Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Repositories
 
@@ -73,7 +73,7 @@ carrying Go types and a signing scheme — and both are meant to be depended on
 the way any other module is:
 
 ```
-require github.com/certpilot/certpilot-gateway-sdk v0.3.0
+require github.com/certpilot/certpilot-gateway-sdk v0.4.0
 ```
 
 A `replace` directive pointing at a sibling checkout is for editing the contract
@@ -86,7 +86,7 @@ is the one in your working tree.
 The contract and the probe are released together, so pinning one pins the other:
 
 ```bash
-go run github.com/certpilot/certpilot-gateway-sdk/cmd/conformance@v0.3.0 \
+go run github.com/certpilot/certpilot-gateway-sdk/cmd/conformance@v0.4.0 \
     -addr localhost:9094 -insecure -domain test.example.com
 ```
 

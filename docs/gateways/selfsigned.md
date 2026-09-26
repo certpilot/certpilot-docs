@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-23T06:59:39Z
+lastUpdated: 2026-09-26T16:23:02Z
 source:
   repo: certpilot/certpilot
   path: docs/gateways/selfsigned.md
-  commit: bc8c475b00fd7bb7c04dfb24906aabe8b3b80646
+  commit: 51f86f743471b396830863eeb47a93b0947e281a
 ---
 
-<!-- Synced from docs/gateways/selfsigned.md in certpilot/certpilot at bc8c475b00fd,
-     last changed 2026-09-23T06:59:39Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/gateways/selfsigned.md in certpilot/certpilot at 51f86f743471,
+     last changed 2026-09-26T16:23:02Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # The self-signed gateway
 
@@ -149,7 +149,7 @@ make run-gateway-selfsigned    # :9091
 
 Released as `ghcr.io/certpilot/gateway-selfsigned` on `linux/amd64` and
 `linux/arm64`, tagged in step with the Go module, so
-`go run github.com/certpilot/certpilot-gateway-selfsigned/cmd@v0.3.0` runs the
+`go run github.com/certpilot/certpilot-gateway-selfsigned/cmd@v0.4.0` runs the
 code the image contains.
 
 This is the one gateway that can be exercised end to end with no external
@@ -157,7 +157,7 @@ dependency, so CI runs the **full issuance path** against it on every pull
 request — with and without a CSR — rather than only the contract checks:
 
 ```bash
-go run github.com/certpilot/certpilot-gateway-sdk/cmd/conformance@v0.3.0 \
+go run github.com/certpilot/certpilot-gateway-sdk/cmd/conformance@v0.4.0 \
     -addr localhost:9091 -insecure -domain test.example.com
 ```
 
