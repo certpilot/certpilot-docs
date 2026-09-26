@@ -124,12 +124,17 @@ jobs:
       # Routes and guides are different, and get a pull request. A new endpoint
       # usually needs a sentence of prose that a generator cannot write, and
       # opening a pull request is what creates the moment to write it.
+      # Pinned the same way as the pages above, and for the same reason: only
+      # the repository that dispatched is pinned. These two read certpilot
+      # alone, and used to take the dispatched SHA whoever sent it, so an agent
+      # merge asked for certpilot's routes.json at an agent commit and got a
+      # 404 (run 36064618794).
       - run: npm run sync
         env:
-          CERTPILOT_REF: ${{ github.event.client_payload.sha }}
+          CERTPILOT_REF: ${{ github.event.client_payload.repo == 'certpilot-agent' && 'main' || github.event.client_payload.sha }}
       - run: npm run sync:guides
         env:
-          CERTPILOT_REF: ${{ github.event.client_payload.sha }}
+          CERTPILOT_REF: ${{ github.event.client_payload.repo == 'certpilot-agent' && 'main' || github.event.client_payload.sha }}
 
       - uses: peter-evans/create-pull-request@v7
         with:
