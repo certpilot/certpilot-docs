@@ -122,6 +122,9 @@ const CODE_TREE = 'https://github.com/certpilot/certpilot/blob/main'
  */
 const ANCHOR_TO_PAGE = {
   'authenticating-an-unattended-screen': '/api/display-tokens',
+  // Certificates → renewing: a key CertPilot does not hold is refused, and
+  // the rule is written up where the renewal queue is (certpilot#114).
+  'asking-for-one': '/api/reference/renewal-queue#asking-for-one',
 }
 
 /**

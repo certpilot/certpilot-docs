@@ -1,8 +1,14 @@
-<!-- Synced from docs/api-reference.md in certpilot/certpilot at 9e9a56600009, last changed 2026-09-21T21:48:46Z.
+<!-- Synced from docs/api-reference.md in certpilot/certpilot at 81031950a7b7, last changed 2026-09-26T11:56:08Z.
      Source heading: "Certificates". Edit it there, not here. -->
 
 `GET /certificates` filters on `status`, `environment`, `common_name`,
 `ca_account_id`.
+
+Despite its name, `common_name` matches **any** of a certificate's names, the
+subject common name or any SAN, by substring and ignoring case. Conforming CAs
+are dropping the common name (Pebble already issues without one), and a
+certificate whose only name is in its SANs must still be findable by it. A
+certificate matches once however many of its names do.
 
 ## Issuing
 
@@ -48,6 +54,9 @@ a policy that finds something must say so even when it does not block.
 `POST /certificates/:id/renew` runs the same path. The key is rotated and the
 new one persisted; a renewal that produced a certificate without storing its
 matching key would leave a record that looks healthy and cannot terminate TLS.
+That is only possible for a key CertPilot already holds: a certificate whose
+`key_custody` is `AGENT` or `EXTERNAL` is refused with `400`, and renewed by
+whoever holds its key (see [Asking for one](/api/reference/renewal-queue#asking-for-one)).
 
 On failure the record is marked `RENEWAL_FAILED` with `renewal_error` set, and
 the previous certificate is left intact.

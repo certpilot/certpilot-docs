@@ -1,4 +1,4 @@
-<!-- Synced from docs/api-reference.md in certpilot/certpilot at 9e9a56600009, last changed 2026-09-21T21:48:46Z.
+<!-- Synced from docs/api-reference.md in certpilot/certpilot at 81031950a7b7, last changed 2026-09-26T11:56:08Z.
      Source heading: "Renewal queue". Edit it there, not here. -->
 
 Renewal is the only part of this system that changes the world. Everything else
@@ -33,6 +33,15 @@ Two certificates issued because somebody clicked twice is a real way to spend a
 weekly rate limit. A certificate with no CA account — anything discovered rather
 than issued — is refused with **400** at this point rather than becoming a job
 that fails forever.
+
+So is a certificate whose private key CertPilot does not hold, again with
+**400**. When `key_custody` is `AGENT`, the refusal names the agent and says how
+to renew it on that host (`certpilot-agent request --name …`). When it is
+`EXTERNAL`, it asks for a new signing request from whoever holds the key. A
+renewal here always ends with the gateway generating a fresh keypair. For these
+certificates, CertPilot would then hold a key it promised never to hold, and
+the record would describe a certificate the key holder is not serving. A job
+for one that was queued some other way is cancelled, not retried.
 
 ## Where a job stands
 
@@ -137,7 +146,9 @@ true because the next call failed.
 
 The advice overrides the configured lead time in both directions — it can bring
 a renewal forward and hold one back — but **never past a seven-day safety
-floor**. Inside that window a certificate renews regardless of what the CA
+floor**, or past a third of the certificate's lifetime when that is shorter. A
+six-day certificate is inside seven days from the moment it is issued, so an
+unbounded floor would renew it on every sweep whatever the CA advised. Inside that window a certificate renews regardless of what the CA
 suggested, so a bad window, or a stale one left by a poller that stopped
 running, cannot defer something about to expire.
 

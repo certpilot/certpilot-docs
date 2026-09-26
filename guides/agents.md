@@ -1,4 +1,4 @@
-<!-- Synced from docs/api-reference.md in certpilot/certpilot at 9e9a56600009, last changed 2026-09-21T21:48:46Z.
+<!-- Synced from docs/api-reference.md in certpilot/certpilot at 81031950a7b7, last changed 2026-09-26T11:56:08Z.
      Source heading: "Agents". Edit it there, not here. -->
 
 Two APIs, kept completely apart.
@@ -299,6 +299,13 @@ means nobody wrote one down, not that somebody else holds the key.
 grant's `renew_before_days`. A host that picked its own moment could decide to
 renew hourly, and four hundred of them would be a denial of service against the
 CA.
+
+`renew_after` always falls inside the certificate's own lifetime, and never in
+its first third. A lead time longer than two thirds of the lifetime is replaced
+by renewing when a third remains, so a six-day certificate under the default 30
+days renews at day four. Without that bound, a certificate shorter than its lead
+time was handed a `renew_after` that had already passed, and the host renewed it
+on every cycle ([#109](https://github.com/certpilot/certpilot/issues/109)).
 
 ## Installing, and reloading
 
