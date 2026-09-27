@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-24T21:03:20Z
+lastUpdated: 2026-09-27T13:00:21Z
 source:
   repo: certpilot/certpilot
   path: docs/evaluation.md
-  commit: 3d0a4bbf19f28a3596cfcd41d01eccb8b32df74b
+  commit: e4442715c7ed5994805fea1cf9dd1fc38b386adc
 ---
 
-<!-- Synced from docs/evaluation.md in certpilot/certpilot at 3d0a4bbf19f2,
-     last changed 2026-09-24T21:03:20Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/evaluation.md in certpilot/certpilot at e4442715c7ed,
+     last changed 2026-09-27T13:00:21Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Evaluate CertPilot
 
@@ -59,9 +59,9 @@ Ports `3000` and `8080` need to be free on the host.
 
 ```bash
 mkdir certpilot-eval && cd certpilot-eval
-base=https://raw.githubusercontent.com/certpilot/certpilot/v0.1.1/deploy
+base=https://raw.githubusercontent.com/certpilot/certpilot/v0.2.0/deploy
 curl -O $base/docker-compose.quickstart.yml -O $base/config.quickstart.yaml
-CERTPILOT_VERSION=0.1.1 GATEWAY_VERSION=0.3.0 \
+CERTPILOT_VERSION=0.2.0 GATEWAY_VERSION=0.4.0 \
   docker compose -f docker-compose.quickstart.yml up -d
 ```
 
@@ -78,9 +78,9 @@ These are the versions this page was written and measured against:
 
 | Component | Version |
 |:--|:--|
-| `ghcr.io/certpilot/core` | 0.1.1 |
-| `ghcr.io/certpilot/frontend` | 0.1.1 |
-| `ghcr.io/certpilot/gateway-selfsigned` | 0.3.0 |
+| `ghcr.io/certpilot/core` | 0.2.0 |
+| `ghcr.io/certpilot/frontend` | 0.2.0 |
+| `ghcr.io/certpilot/gateway-selfsigned` | 0.4.0 |
 | `postgres` | 17-alpine |
 
 ## 2. Sign in
@@ -189,13 +189,10 @@ curl -sS -b "$JAR" localhost:8080/api/v1/renewals/<job-id>
 It reaches `SUCCEEDED` in a few seconds here. The certificate then shows
 `renewal_count: 1` and a new serial.
 
-> **Known defect, [#102](https://github.com/certpilot/certpilot/issues/102):**
-> the renewed certificate comes back with the gateway's default lifetime rather
-> than the 90 days the account asked for — you will see `days_remaining` jump to
-> around 364. A renewal does not send a requested lifetime, and the conformance
-> check that would report the discrepancy is disabled by the same missing
-> value. It is recorded here because you will see it, not because it is
-> intended.
+The renewed certificate keeps the 90 days the account asked for, so
+`days_remaining` is 89 again. Before core v0.2.0 and gateway v0.4.0 a renewal
+asked for no lifetime, came back with the gateway's 365-day default, and raised
+no finding ([#102](https://github.com/certpilot/certpilot/issues/102)).
 
 ## 6. Check the audit chain
 
