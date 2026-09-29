@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-14T06:00:25Z
+lastUpdated: 2026-09-29T07:23:18Z
 source:
   repo: certpilot/certpilot-agent
   path: docs/platforms/haproxy.md
-  commit: a77399fb8fb867db48dbfd43325d9e74129e1142
+  commit: 93103f9a98bc4cc9bc022da3ed2240e74833a68a
 ---
 
-<!-- Synced from docs/platforms/haproxy.md in certpilot/certpilot-agent at a77399fb8fb8,
-     last changed 2026-09-14T06:00:25Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/platforms/haproxy.md in certpilot/certpilot-agent at 93103f9a98bc,
+     last changed 2026-09-29T07:23:18Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # HAProxy
 
@@ -33,8 +33,9 @@ bind :443 ssl crt /etc/certpilot/live/www.example.com/haproxy.pem
 
 The profile sets `cert_path` and `key_path` to the same file. The agent
 recognises this as the combined layout, writes the certificate, chain and key
-in the required order, and applies the private key's file mode (`0640`) to the
-combined file rather than the certificate's.
+in the required order, and applies the private key's file mode (`0600`, or
+`0640` when the destination names a group) to the combined file rather than the
+certificate's.
 
 ## What the agent does
 

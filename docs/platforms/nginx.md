@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-14T06:00:25Z
+lastUpdated: 2026-09-29T07:23:18Z
 source:
   repo: certpilot/certpilot-agent
   path: docs/platforms/nginx.md
-  commit: a77399fb8fb867db48dbfd43325d9e74129e1142
+  commit: 93103f9a98bc4cc9bc022da3ed2240e74833a68a
 ---
 
-<!-- Synced from docs/platforms/nginx.md in certpilot/certpilot-agent at a77399fb8fb8,
-     last changed 2026-09-14T06:00:25Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/platforms/nginx.md in certpilot/certpilot-agent at 93103f9a98bc,
+     last changed 2026-09-29T07:23:18Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # nginx
 
@@ -54,9 +54,11 @@ Both perform the same operation — the Debian unit file's `ExecReload` invokes
 whereas unit names are not. nginx starts new worker processes and allows
 existing ones to finish, so no connection is dropped.
 
-The private key is written with mode `0640` and owned by root. nginx's master
+The private key is written with mode `0600` and owned by root. nginx's master
 process reads the key before worker processes drop privileges, so the worker
-user does not require access to it.
+user does not require access to it. If something else on the host has to read
+the key, name its group on the destination (`"group": "ssl-cert"`); the key is
+then written `0640` for that group, and nothing else needs changing.
 
 ## Limitations
 
