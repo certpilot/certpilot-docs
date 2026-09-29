@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-27T13:00:21Z
+lastUpdated: 2026-09-29T18:22:13Z
 source:
   repo: certpilot/certpilot
   path: docs/evaluation.md
-  commit: e4442715c7ed5994805fea1cf9dd1fc38b386adc
+  commit: ea59efe9cbdab11f0b4091fbcb8c4f3ec0d69028
 ---
 
-<!-- Synced from docs/evaluation.md in certpilot/certpilot at e4442715c7ed,
-     last changed 2026-09-27T13:00:21Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/evaluation.md in certpilot/certpilot at ea59efe9cbda,
+     last changed 2026-09-29T18:22:13Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Evaluate CertPilot
 
@@ -59,9 +59,9 @@ Ports `3000` and `8080` need to be free on the host.
 
 ```bash
 mkdir certpilot-eval && cd certpilot-eval
-base=https://raw.githubusercontent.com/certpilot/certpilot/v0.2.0/deploy
+base=https://raw.githubusercontent.com/certpilot/certpilot/v0.2.1/deploy
 curl -O $base/docker-compose.quickstart.yml -O $base/config.quickstart.yaml
-CERTPILOT_VERSION=0.2.0 GATEWAY_VERSION=0.4.0 \
+CERTPILOT_VERSION=0.2.1 GATEWAY_VERSION=0.4.0 \
   docker compose -f docker-compose.quickstart.yml up -d
 ```
 
@@ -78,8 +78,8 @@ These are the versions this page was written and measured against:
 
 | Component | Version |
 |:--|:--|
-| `ghcr.io/certpilot/core` | 0.2.0 |
-| `ghcr.io/certpilot/frontend` | 0.2.0 |
+| `ghcr.io/certpilot/core` | 0.2.1 |
+| `ghcr.io/certpilot/frontend` | 0.2.1 |
 | `ghcr.io/certpilot/gateway-selfsigned` | 0.4.0 |
 | `postgres` | 17-alpine |
 
