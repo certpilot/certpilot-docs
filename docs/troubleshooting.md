@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-13T14:30:13Z
+lastUpdated: 2026-09-29T07:21:50Z
 source:
   repo: certpilot/certpilot
   path: docs/troubleshooting.md
-  commit: 5f54cebd6755bab9bfa3e16e948feed4956bb51d
+  commit: d94b0d11eef8c022cb47fc09c9eb6520c692187b
 ---
 
-<!-- Synced from docs/troubleshooting.md in certpilot/certpilot at 5f54cebd6755,
-     last changed 2026-09-13T14:30:13Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/troubleshooting.md in certpilot/certpilot at d94b0d11eef8,
+     last changed 2026-09-29T07:21:50Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Troubleshooting
 
@@ -85,9 +85,17 @@ without setting `server_name` fails verification.
 
 **`gateway for <CA> is not connected`**
 
-A CA account references a gateway that has not registered. The core matches by
-account **name** first, then by **provider type**. A gateway named `vault` in
-the config serves any `vault` account that has no better match.
+The core could not reach the gateway serving that CA account. It looks for a
+gateway connected under the account's **name**, dials the account's own
+**address** if nothing is, and then falls back to a gateway registered under the
+**provider type**. A gateway named `vault` in the config serves any `vault`
+account that has no better match.
+
+The message ends with why the dial failed. A dial that failed is not repeated
+for 30 seconds, so requests that need a gateway that is down fail at once
+rather than each waiting for a dial. The health sweep, every two minutes, dials
+it again, as does **Check now** on the account. Nothing needs restarting when
+the gateway comes back.
 
 **`the gateway could not report its issuers`**
 
