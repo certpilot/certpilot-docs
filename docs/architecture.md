@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-21T21:48:46Z
+lastUpdated: 2026-09-29T07:32:34Z
 source:
   repo: certpilot/certpilot
   path: docs/architecture.md
-  commit: 9e9a566000099c09d1f96546a3b48910ca0fa6db
+  commit: cf7c521baa900abc7611dd41820b2c1b6c28f73f
 ---
 
-<!-- Synced from docs/architecture.md in certpilot/certpilot at 9e9a56600009,
-     last changed 2026-09-21T21:48:46Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/architecture.md in certpilot/certpilot at cf7c521baa90,
+     last changed 2026-09-29T07:32:34Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Architecture
 
@@ -191,12 +191,12 @@ background engine in-process.
 | Engine | Package | Default cadence | What it does |
 |:---|:---|:---|:---|
 | Renewal scheduler | `engine/renewal` | 60 min | Finds certificates inside their lead window, enqueues jobs |
-| Renewal queue | `engine/renewal` | 5 s claim, 90 s lease | Claims and executes renewal jobs |
+| Renewal queue | `engine/renewal` | 5 s claim, 5 min lease kept alive every 90 s | Claims and executes renewal jobs |
 | ARI poller | `engine/renewal` | 6 h | Asks CAs for RFC 9773 renewal windows |
 | Verifier | `engine/renewal` | — | Opens a TLS connection and checks the new certificate is actually being served |
 | CA monitor | `engine/pki` | 6 h | Re-parses every CA, checks CRL and OCSP, crosses expiry thresholds |
 | CA importer | `engine/pki` | 12 h | Asks gateways for their issuers and records them |
-| Deployment queue | `engine/deploy` | 5 s claim, 60 s lease | Installs certificates where they are served |
+| Deployment queue | `engine/deploy` | 5 s claim, 3 min lease kept alive every 60 s | Installs certificates where they are served |
 | Discovery scheduler | `engine/discovery` | 1 min | Runs due network scans |
 | CT monitor | `engine/ctlog` | 1 min | Watches Certificate Transparency logs for your domains |
 | Cloud sync | `engine/cloudsync` | 1 min | Inventories ACM, Key Vault, Google, Kubernetes |
