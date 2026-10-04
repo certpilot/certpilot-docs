@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-04T11:47:47Z
+lastUpdated: 2026-10-04T11:51:04Z
 source:
   repo: certpilot/certpilot
   path: docs/comparison.md
-  commit: 15aa11e00acd574a6e9558cdcf8d44a52d1c27c6
+  commit: d02ded9b52aff3834f68ed430dd1bef82459adc6
 ---
 
-<!-- Synced from docs/comparison.md in certpilot/certpilot at 15aa11e00acd,
-     last changed 2026-10-04T11:47:47Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/comparison.md in certpilot/certpilot at d02ded9b52af,
+     last changed 2026-10-04T11:51:04Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # How CertPilot compares
 
@@ -161,7 +161,7 @@ Which CAs it issues from, and where it installs.
 
 | | What is documented |
 |:--|:--|
-| CertPilot | **CAs:** ✅ ACME, run by hand against Let's Encrypt staging and in the walkthroughs against Pebble. ✅ HashiCorp Vault PKI. ✅ A self-signed CA for evaluation. 🧪 ACME External Account Binding. ❌ No gateway for AD CS, AWS Private CA, Google Cloud CAS, DigiCert or Sectigo; AD CS is first in line on the [roadmap](https://github.com/certpilot/certpilot/blob/main/ROADMAP.md). **Installs:** ✅ The agent installs to ten named platforms, nine tested in containers and IIS on a Windows runner. ✅ A signed webhook. 🧪 AWS ACM, Azure Key Vault and F5 BIG-IP. **Discovery:** ✅ network scans; 🧪 Certificate Transparency and cloud inventory |
+| CertPilot | **CAs:** ✅ ACME, run by hand against Let's Encrypt staging and in the walkthroughs against Pebble. ✅ HashiCorp Vault PKI. ✅ A self-signed CA for evaluation. ✅ ACME External Account Binding, checked against Pebble; no commercial CA's own binding rules have been tested. ❌ No gateway for AD CS, AWS Private CA, Google Cloud CAS, DigiCert or Sectigo; AD CS is first in line on the [roadmap](https://github.com/certpilot/certpilot/blob/main/ROADMAP.md). **Installs:** ✅ The agent installs to ten named platforms, nine tested in containers and IIS on a Windows runner. ✅ A signed webhook. 🧪 AWS ACM, Azure Key Vault and F5 BIG-IP. **Discovery:** ✅ network scans; 🧪 Certificate Transparency and cloud inventory |
 | Keyfactor | "a CA may be a Microsoft CA or a Keyfactor gateway to a cloud-based or remote CA" ([K7](#sources)). Command SaaS "is designed to integrate with a third-party Certificate Authority (CA) for certificate issuance" ([K2](#sources)) |
 | NGTS | SaaS: Microsoft AD CS, set up "for issuing and importing certificates" ([V9](#sources)) through a VSatellite ([V12](#sources)), and "Connector CAs using the CA Connector Framework" ([V8](#sources)) |
 | DigiCert | A Microsoft CA connector to "import, enroll, and manage certificates from private Microsoft certificate authorities (CAs)" ([D7](#sources)). Sensors discover through connectors: "Scans appliances, cloud providers, and CA's using connectors" ([D4](#sources)) |
