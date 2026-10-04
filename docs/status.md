@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-04T11:03:36Z
+lastUpdated: 2026-10-04T11:07:30Z
 source:
   repo: certpilot/certpilot
   path: docs/status.md
-  commit: dfacdf573a62c2327f053df5f8c4c9d21a6ce2e4
+  commit: c641ceac25bc47365d0ca14a90d9b7a766d63eac
 ---
 
-<!-- Synced from docs/status.md in certpilot/certpilot at dfacdf573a62,
-     last changed 2026-10-04T11:03:36Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/status.md in certpilot/certpilot at c641ceac25bc,
+     last changed 2026-10-04T11:07:30Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Implementation status
 
@@ -38,6 +38,8 @@ What CI does exercise, on every pull request:
   server, over STARTTLS, implicit TLS and a plain relay; and signed webhook
   alerts checked by a receiver that uses the verification snippet in the
   [API reference](/api/) — `make live-notifications`
+- sign-in and bearer tokens against Keycloak, a real OpenID provider, through a
+  rotation of its signing key — `make live-oidc`
 
 Everything it runs against is started inside the job. There are no third-party
 secrets in any workflow.
@@ -60,7 +62,7 @@ This is early development software. Do not run it in production yet.
 | Self-signed gateway | ✅ | Development and testing |
 | Secrets encrypted at rest | ✅ | AES-256-GCM envelope encryption, context-bound, rotatable |
 | Mutual TLS, core ↔ gateway | ✅ | Required by default; `make dev-certs` to get started |
-| OIDC authentication | 🧪 | Any provider, via JWKS; legacy shared-secret path also supported. Verified against an `httptest` JWKS endpoint, never against a running Keycloak, Okta, Entra or Auth0 |
+| OIDC authentication | ✅ | Any provider, via JWKS; legacy shared-secret path also supported. CI signs in through Keycloak the way the console does — authorization code with PKCE and a nonce, redeemed by the core — and presents its access tokens as bearer credentials. A replayed code, a wrong nonce, a wrong PKCE verifier, an altered signature and a token from a realm the core does not trust are each refused. A signing key Keycloak has just rotated to is accepted within ten seconds. Okta, Entra ID and Auth0 have not been tested by this project |
 | RBAC | ✅ | admin / operator / auditor / viewer, enforced per route |
 | Audit log | ✅ | Hash-chained. Every entry carries a gapless sequence number, its predecessor's tag, and an HMAC over both, keyed from a subkey of the master key, so a database-only attacker can alter a row and cannot forge a tag that agrees with it. `GET /audit/verify` walks the chain and counts the pre-chain entries rather than pretending they are covered |
 | Ownership and acknowledgement | ✅ | Who owns a CA, who acknowledged an alert and why. Silencing suppresses delivery only — an acknowledged CA never leaves the dashboard |

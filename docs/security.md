@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-04T10:53:48Z
+lastUpdated: 2026-10-04T11:07:30Z
 source:
   repo: certpilot/certpilot
   path: docs/security.md
-  commit: 48be7b4b3b0b68fbefc1f17e25448b7adf06e493
+  commit: c641ceac25bc47365d0ca14a90d9b7a766d63eac
 ---
 
-<!-- Synced from docs/security.md in certpilot/certpilot at 48be7b4b3b0b,
-     last changed 2026-10-04T10:53:48Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/security.md in certpilot/certpilot at c641ceac25bc,
+     last changed 2026-10-04T11:07:30Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Security model
 
@@ -262,8 +262,14 @@ verification modes:
 
 **JWKS (preferred).** The core fetches the identity provider's published public
 keys and verifies asymmetric signatures. It holds nothing capable of minting a
-token. Works with any OIDC provider — Keycloak, Okta, Entra ID, Auth0,
-Authentik.
+token. It is written to the OIDC standard rather than to any one provider, and
+CI runs it against Keycloak (`make live-oidc`). Okta, Entra ID, Auth0 and
+Authentik follow the same standard and have not been tested by this project.
+
+When a provider rotates its signing key it signs with the new one at once, so
+a token naming a key the core has not seen makes it fetch the key set again
+rather than refuse. That second look happens at most once every ten seconds:
+the key id is read before the signature is checked, and anyone can invent one.
 
 **Shared secret (legacy).** HS256 against `auth.jwt_secret`. This requires the
 core to hold a key that can *forge* an admin token. Kept only for providers
