@@ -18,6 +18,16 @@ on:
     - cron: '0 6 * * 1'
   workflow_dispatch:
 
+# One sync at a time. Two repositories merging within a minute of each other
+# dispatch two runs, both check out the same main, and the second push is
+# rejected as not a fast-forward: certpilot#118 and certpilot-agent#6 did
+# exactly that on 2026-09-27. Queued rather than cancelled, because a run in
+# progress is publishing something. GitHub keeps one pending run per group,
+# so a burst of merges ends with the newest, which reads both repositories.
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pull-requests: write
