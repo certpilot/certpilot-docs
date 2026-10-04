@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-21T21:48:46Z
+lastUpdated: 2026-10-04T11:44:39Z
 source:
   repo: certpilot/certpilot
   path: docs/discovery.md
-  commit: 9e9a566000099c09d1f96546a3b48910ca0fa6db
+  commit: 9bcfc91512251f02bb1a5b35d8326eb185e57f54
 ---
 
-<!-- Synced from docs/discovery.md in certpilot/certpilot at 9e9a56600009,
-     last changed 2026-09-21T21:48:46Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/discovery.md in certpilot/certpilot at 9bcfc9151225,
+     last changed 2026-10-04T11:44:39Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Discovery
 
@@ -127,8 +127,13 @@ curl -b "$JAR" -X POST localhost:8080/api/v1/ct/monitors -H 'Content-Type: appli
 ```
 
 The monitor polls every minute for monitors that are due, matches what it finds
-against the inventory by fingerprint, and raises `ct.unmanaged` for anything it
-does not recognise.
+against the inventory by serial number, and raises `ct.unmanaged` for anything
+it does not recognise. Serials are compared in one normalised form, because the
+index pads them and changes their case and the inventory does neither. A
+certificate's precertificate is recorded and marked, not counted as a second
+certificate.
+
+`make live-ct` runs this daily against crt.sh.
 
 This only sees **publicly trusted** issuance. A private CA does not log to CT,
 which is why the network scan and the agent inventory exist alongside it.

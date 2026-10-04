@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-04T11:07:30Z
+lastUpdated: 2026-10-04T11:44:39Z
 source:
   repo: certpilot/certpilot
   path: docs/status.md
-  commit: c641ceac25bc47365d0ca14a90d9b7a766d63eac
+  commit: 9bcfc91512251f02bb1a5b35d8326eb185e57f54
 ---
 
-<!-- Synced from docs/status.md in certpilot/certpilot at c641ceac25bc,
-     last changed 2026-10-04T11:07:30Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/status.md in certpilot/certpilot at 9bcfc9151225,
+     last changed 2026-10-04T11:44:39Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Implementation status
 
@@ -40,6 +40,11 @@ What CI does exercise, on every pull request:
   [API reference](/api/) — `make live-notifications`
 - sign-in and bearer tokens against Keycloak, a real OpenID provider, through a
   rotation of its signing key — `make live-oidc`
+
+Daily, and on demand: Certificate Transparency against crt.sh, for a public
+site's real certificates — `make live-ct`. It is kept off pull requests because
+it depends on crt.sh being up, and a red run there should read as "look at
+this", not "your change broke it".
 
 Everything it runs against is started inside the job. There are no third-party
 secrets in any workflow.
@@ -80,7 +85,7 @@ This is early development software. Do not run it in production yet.
 | Key usage and extended key usage | ⚠️ | Enforced where a gateway builds the certificate (selfsigned). Refused at save time on Vault unless the selected role's own flags can produce it, and on ACME unconditionally — see the table below for why. Verified after every issuance regardless, so a wrong value cannot pass silently |
 | Post-issuance conformance checking | ✅ | Every issuance and renewal parses what the CA actually returned and compares it against what was asked: key type, key size, names, validity, and added subject fields. `conformance: ENFORCE | REPORT` on the template decides whether a mismatch refuses (and revokes, where the gateway supports it) or is only recorded. See [templates.md](/templates#issue-then-check) |
 | Discovery | ✅ | Scans hosts, CIDR networks, and address ranges on a schedule; records the full handshake, says which certificates nobody manages, and reports what changed since last time |
-| Certificate Transparency | 🧪 | Watches CT for certificates issued in your name — including ones never deployed anywhere you could scan. A check that could not run is never reported as a check that found nothing. Tested against a fake log; no public CT log is queried by CI |
+| Certificate Transparency | ✅ | Watches CT for certificates issued in your name — including ones never deployed anywhere you could scan. A check that could not run is never reported as a check that found nothing. Checked daily against crt.sh: the certificate a public site is serving, imported through discovery, is found in the index and matched to the inventory, although Python, crt.sh and the core each spell its serial differently. Its precertificate is recorded without counting the certificate twice, and a crt.sh outage reads as a check that did not run. Not run on pull requests, because it depends on crt.sh being up |
 | Cloud inventory | 🧪 | Reads ACM, Azure Key Vault, Google Cloud, and Kubernetes TLS secrets. Reports which certificates the provider itself will not renew — the ones everybody assumes are automatic. Written to each provider's published API and tested against fakes; no cloud account is reached by CI |
 | Renewal queue | ✅ | Durable jobs with leases, an attempt log, and backoff that tightens as expiry approaches. Safe on N replicas with no leader. Per-CA rate limits defer rather than fail |
 | Post-renewal verification | ✅ | Re-probes the endpoints discovery has seen serving a certificate and reports when a renewal never reached them — the green-dashboard-over-an-expiring-estate failure, caught |
