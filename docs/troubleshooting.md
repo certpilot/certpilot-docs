@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-04T10:57:29Z
+lastUpdated: 2026-10-04T11:00:44Z
 source:
   repo: certpilot/certpilot
   path: docs/troubleshooting.md
-  commit: 5e1ae46b6aa9de672109ae72ec5374522905878e
+  commit: bd31606bd7ab420dac24f1307b72e1b0d2ad6f50
 ---
 
-<!-- Synced from docs/troubleshooting.md in certpilot/certpilot at 5e1ae46b6aa9,
-     last changed 2026-10-04T10:57:29Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/troubleshooting.md in certpilot/certpilot at bd31606bd7ab,
+     last changed 2026-10-04T11:00:44Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Troubleshooting
 
@@ -102,10 +102,23 @@ without setting `server_name` fails verification.
 **`gateway for <CA> is not connected`**
 
 The core could not reach the gateway serving that CA account. It looks for a
-gateway connected under the account's **name**, dials the account's own
-**address** if nothing is, and then falls back to a gateway registered under the
-**provider type**. A gateway named `vault` in the config serves any `vault`
-account that has no better match.
+gateway connected under the account's **name**, then for one already connected
+at the account's **address**, whatever it is called. It dials the address if
+neither is, and then falls back to a gateway registered under the **provider
+type**. A gateway named `vault` in the config serves any `vault` account that
+has no better match.
+
+**After upgrading from v0.1.x**, an account created before v0.2.0 has no
+`server_name`: v0.1.x accepted it and never stored it. If the account's
+address is a gateway in the config file, the connection made for that gateway
+serves it. If not, and the gateway's certificate does not name the address
+that is dialled, the dial fails hostname verification after its timeout, which
+reads like the gateway being down. There is no API to change an account, so
+set it in the database:
+
+```sql
+update ca_accounts set server_name = 'localhost' where name = 'selfsigned-eval';
+```
 
 The message ends with why the dial failed. A dial that failed is not repeated
 for 30 seconds, so requests that need a gateway that is down fail at once
