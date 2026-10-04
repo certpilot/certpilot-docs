@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-24T21:03:20Z
+lastUpdated: 2026-10-04T10:53:48Z
 source:
   repo: certpilot/certpilot
   path: docs/security.md
-  commit: 3d0a4bbf19f28a3596cfcd41d01eccb8b32df74b
+  commit: 48be7b4b3b0b68fbefc1f17e25448b7adf06e493
 ---
 
-<!-- Synced from docs/security.md in certpilot/certpilot at 3d0a4bbf19f2,
-     last changed 2026-09-24T21:03:20Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/security.md in certpilot/certpilot at 48be7b4b3b0b,
+     last changed 2026-10-04T10:53:48Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Security model
 
@@ -437,7 +437,9 @@ entry N-1                     entry N
 
 Each entry also records **which** KEK signed it, in the same short hex form the
 encryption envelopes use, so rotating `CERTPILOT_KEK` does not invalidate
-history. Without that, the safe thing to do would be never to rotate.
+history, provided the old key stays in `CERTPILOT_KEK_RETIRED`. Checking an
+entry needs the key that signed it, so a retired key is kept for as long as the
+audit log is ([operations.md](/operations#rotating-the-kek)).
 
 `GET /api/v1/audit/verify` (admin) walks the chain and reports the first break,
 its sequence number, and a reason. It is surfaced in **Settings → Audit record**.
