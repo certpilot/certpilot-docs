@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-29T07:21:50Z
+lastUpdated: 2026-10-04T10:50:53Z
 source:
   repo: certpilot/certpilot
   path: docs/troubleshooting.md
-  commit: d94b0d11eef8c022cb47fc09c9eb6520c692187b
+  commit: 27b00d07016d0fa8a50766131436e31d0ece34d1
 ---
 
-<!-- Synced from docs/troubleshooting.md in certpilot/certpilot at d94b0d11eef8,
-     last changed 2026-09-29T07:21:50Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/troubleshooting.md in certpilot/certpilot at 27b00d07016d,
+     last changed 2026-10-04T10:50:53Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Troubleshooting
 
@@ -30,6 +30,15 @@ Symptom, cause, fix. Grouped by where the symptom shows up.
 
 The core will not start against a database without one. `make generate-kek`,
 then put it somewhere durable — see [operations.md](/operations#first-run).
+
+**`this database was sealed with key encryption key …, and this core was given …`**
+
+The core was given a different key from the one this database was sealed with:
+usually a restore started with another environment's `CERTPILOT_KEK`. It stops
+before writing anything, so the database is exactly as it was restored. Set
+`CERTPILOT_KEK` to the key the message names, or keep it in
+`CERTPILOT_KEK_RETIRED` if you have rotated since. If that key is lost for good,
+see [operations.md](/operations#backups-and-restore).
 
 **`config: auth.allow_anonymous no longer exists and must be removed`**
 
