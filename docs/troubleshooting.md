@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-04T10:50:53Z
+lastUpdated: 2026-10-04T10:57:29Z
 source:
   repo: certpilot/certpilot
   path: docs/troubleshooting.md
-  commit: 27b00d07016d0fa8a50766131436e31d0ece34d1
+  commit: 5e1ae46b6aa9de672109ae72ec5374522905878e
 ---
 
-<!-- Synced from docs/troubleshooting.md in certpilot/certpilot at 27b00d07016d,
-     last changed 2026-10-04T10:50:53Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/troubleshooting.md in certpilot/certpilot at 5e1ae46b6aa9,
+     last changed 2026-10-04T10:57:29Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Troubleshooting
 
@@ -30,6 +30,13 @@ Symptom, cause, fix. Grouped by where the symptom shows up.
 
 The core will not start against a database without one. `make generate-kek`,
 then put it somewhere durable — see [operations.md](/operations#first-run).
+
+**`this database's schema is at migration …, and this core needs migration …`**
+
+The migrations for this release have not been run. Run them, then start the
+core: `certpilot-core --migrate`, `make migrate`, or
+`docker compose … --profile migrate run --rm migrate`. See
+[operations.md](/operations#migrations).
 
 **`this database was sealed with key encryption key …, and this core was given …`**
 
