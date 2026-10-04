@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-04T11:44:39Z
+lastUpdated: 2026-10-04T11:47:47Z
 source:
   repo: certpilot/certpilot
   path: docs/discovery.md
-  commit: 9bcfc91512251f02bb1a5b35d8326eb185e57f54
+  commit: 15aa11e00acd574a6e9558cdcf8d44a52d1c27c6
 ---
 
-<!-- Synced from docs/discovery.md in certpilot/certpilot at 9bcfc9151225,
-     last changed 2026-10-04T11:44:39Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/discovery.md in certpilot/certpilot at 15aa11e00acd,
+     last changed 2026-10-04T11:47:47Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Discovery
 
@@ -179,6 +179,32 @@ Often it does not, and the reason varies by provider:
 CertPilot reports which. "This certificate in your load balancer will not renew
 and expires in 34 days" is the sentence, and it is one nobody gets from the
 provider's own console.
+
+### Kubernetes
+
+Give the connection a service account token that can get and list `secrets`
+and `ingresses.networking.k8s.io`, and nothing more, and the cluster's CA as
+`ca_cert`:
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata: {name: certpilot-inventory}
+rules:
+  - apiGroups: [""]
+    resources: [secrets]
+    verbs: [get, list]
+  - apiGroups: [networking.k8s.io]
+    resources: [ingresses]
+    verbs: [get, list]
+```
+
+A secret cert-manager issued reads as renewed by cert-manager, from the
+`cert-manager.io/certificate-name` annotation cert-manager writes. Anything else
+reads as renewed by nothing. Without the right to read Ingresses the sync still
+works, and says it does not know which secrets are attached rather than
+reporting them all unattached. `make live-kubernetes` runs all of this against a
+kind cluster.
 
 ---
 

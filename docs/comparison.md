@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-04T11:07:30Z
+lastUpdated: 2026-10-04T11:47:47Z
 source:
   repo: certpilot/certpilot
   path: docs/comparison.md
-  commit: c641ceac25bc47365d0ca14a90d9b7a766d63eac
+  commit: 15aa11e00acd574a6e9558cdcf8d44a52d1c27c6
 ---
 
-<!-- Synced from docs/comparison.md in certpilot/certpilot at c641ceac25bc,
-     last changed 2026-10-04T11:07:30Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/comparison.md in certpilot/certpilot at 15aa11e00acd,
+     last changed 2026-10-04T11:47:47Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # How CertPilot compares
 
@@ -89,12 +89,13 @@ it, and the weekly documentation run does the same.
   ([#87](https://github.com/certpilot/certpilot/issues/87),
   [#90](https://github.com/certpilot/certpilot/issues/90)). All three commercial
   platforms document one. See [Governance](#governance).
-- **You need Slack notifications or cloud inventory that you can rely on
-  today.** CertPilot has built both, but each is 🧪: nothing in this project has
-  run it against a real Slack workspace or cloud account. Email and webhook
-  alerts are verified: CI delivers them to a real mail server, and to a receiver
-  that checks the signature the way the documentation says to. Sign-in through
-  an identity provider is verified against Keycloak.
+- **You need Slack notifications, or inventory of ACM, Azure Key Vault or
+  Google Cloud, that you can rely on today.** CertPilot has built both, but each
+  is 🧪: nothing in this project has run it against a real Slack workspace or
+  cloud account. Email and webhook alerts are verified: CI delivers them to a
+  real mail server, and to a receiver that checks the signature the way the
+  documentation says to. Sign-in through an identity provider is verified
+  against Keycloak, and Kubernetes inventory against a real cluster.
 - **The platform's own keys must be protected by an HSM or a KMS.** CertPilot
   holds its key encryption key in memory, loaded from an environment variable, a
   file or Vault. Delegated unwrapping is not built. See
