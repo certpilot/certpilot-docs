@@ -1,4 +1,4 @@
-<!-- Synced from docs/api-reference.md in certpilot/certpilot at 51f86f743471, last changed 2026-09-26T16:23:02Z.
+<!-- Synced from docs/api-reference.md in certpilot/certpilot at 39bd5ea177f5, last changed 2026-10-10T13:56:22Z.
      Source heading: "CA accounts and gateways". Edit it there, not here. -->
 
 ## Registering
