@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-11T18:38:34Z
+lastUpdated: 2026-10-11T18:43:30Z
 source:
   repo: certpilot/certpilot-agent
   path: docs/agent.md
-  commit: d62e535433e022fecc90cdf3ae9eadc982c91104
+  commit: 2ab7cda7fc805806484c0548b83fb1a35bfeb006
 ---
 
-<!-- Synced from docs/agent.md in certpilot/certpilot-agent at d62e535433e0,
-     last changed 2026-10-11T18:38:34Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/agent.md in certpilot/certpilot-agent at 2ab7cda7fc80,
+     last changed 2026-10-11T18:43:30Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # The host agent
 
@@ -584,8 +584,23 @@ certpilot-agent run --once         # one cycle, then exit — for cron or a unit
 certpilot-agent status             # what this host holds and when it last reported
 ```
 
-As a systemd unit — see [Where it runs](#where-it-runs) for the platforms
-this is supported on:
+The `.deb` and `.rpm` from a release install the binary to
+`/usr/bin/certpilot-agent` with two ways to run it, neither enabled until you
+choose one after enrolling:
+
+```bash
+sudo certpilot-agent enrol --server=https://certpilot.example.com --token=...
+sudo systemctl enable --now certpilot-agent          # the daemon
+# or
+sudo systemctl enable --now certpilot-agent.timer    # one cycle every 5 minutes
+```
+
+Both units do nothing until `/var/lib/certpilot-agent/agent.json` exists.
+Removing the package stops them and leaves the identity in place, so a
+reinstall does not need a new enrolment.
+
+Installed by hand, as a systemd unit — see [Where it runs](#where-it-runs) for
+the platforms this is supported on:
 
 ```ini
 [Unit]
