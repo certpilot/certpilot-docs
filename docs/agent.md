@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-11T18:43:30Z
+lastUpdated: 2026-10-11T18:48:29Z
 source:
   repo: certpilot/certpilot-agent
   path: docs/agent.md
-  commit: 2ab7cda7fc805806484c0548b83fb1a35bfeb006
+  commit: 8eea1ef7e94a2d32b1e053bf5cdbf1d62e8eee4b
 ---
 
-<!-- Synced from docs/agent.md in certpilot/certpilot-agent at 2ab7cda7fc80,
-     last changed 2026-10-11T18:43:30Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/agent.md in certpilot/certpilot-agent at 8eea1ef7e94a,
+     last changed 2026-10-11T18:48:29Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # The host agent
 
@@ -616,6 +616,18 @@ RestartSec=30
 [Install]
 WantedBy=multi-user.target
 ```
+
+On Windows, as a service, from an elevated prompt after enrolling:
+
+```powershell
+certpilot-agent service install     # registers it to start with Windows
+Start-Service certpilot-agent
+certpilot-agent service uninstall   # stops and removes it; the identity stays
+```
+
+It runs as LocalSystem, restarts 30 seconds after a failure, and logs to the
+Application event log under `certpilot-agent`. It is not installed if the host
+has not enrolled.
 
 It runs as root when it has to write into `/etc/nginx` and reload a service.
 Where it does not, run it as a user that owns the certificate directory.
