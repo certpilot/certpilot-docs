@@ -1,4 +1,4 @@
-<!-- Synced from docs/api-reference.md in certpilot/certpilot at 51f86f743471, last changed 2026-09-26T16:23:02Z.
+<!-- Synced from docs/api-reference.md in certpilot/certpilot at 250033964156, last changed 2026-10-17T12:35:52Z.
      Source heading: "Dashboard". Edit it there, not here. -->
 
 ## Statistics
