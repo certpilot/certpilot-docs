@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-12T09:27:16Z
+lastUpdated: 2026-10-17T12:31:35Z
 source:
   repo: certpilot/certpilot
   path: docs/configuration.md
-  commit: 206730a0d7a6647ae37fdbc61833d271c492dc6c
+  commit: 5cbe163298311ca3b88b977e034c7b441dbb05b5
 ---
 
-<!-- Synced from docs/configuration.md in certpilot/certpilot at 206730a0d7a6,
-     last changed 2026-09-12T09:27:16Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/configuration.md in certpilot/certpilot at 5cbe16329831,
+     last changed 2026-10-17T12:31:35Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Configuration reference
 
@@ -113,6 +113,23 @@ server:
 | `port` | `8080` | HTTP port |
 | `mode` | `development` | See [production mode](#production-mode) |
 | `allowed_origins` | — | Browser origins permitted to call the API. Must name the frontend explicitly — a wildcard is not accepted alongside credentials |
+
+### `acme`
+
+```yaml
+acme:
+  enabled: true
+  external_url: "https://certpilot.example.com"
+```
+
+| Key | Default | |
+|:---|:---|:---|
+| `enabled` | `false` | Serves ACME (RFC 8555) from the core, so certbot, acme.sh, win-acme and Caddy can get certificates from CertPilot. Off by default because it opens unauthenticated endpoints at `/acme/<template>/…` on the core's listener |
+| `external_url` | — | The address clients reach the core on. Every URL the server hands out is built from it, and a request is refused unless it was signed for one of them. Required, and must be `https`, in production mode. In development the address is taken from each request |
+
+Registration is closed. A client needs an external account binding credential,
+which an administrator creates for one template (`POST /api/v1/acme/credentials`),
+and the account it makes can only ask for what that template allows.
 
 ### `auth`
 
