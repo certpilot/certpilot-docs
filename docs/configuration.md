@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-17T12:31:35Z
+lastUpdated: 2026-10-18T16:46:04Z
 source:
   repo: certpilot/certpilot
   path: docs/configuration.md
-  commit: 5cbe163298311ca3b88b977e034c7b441dbb05b5
+  commit: 1fb03b7e22865f53e995555f59d1a8eeeb38a223
 ---
 
-<!-- Synced from docs/configuration.md in certpilot/certpilot at 5cbe16329831,
-     last changed 2026-10-17T12:31:35Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/configuration.md in certpilot/certpilot at 1fb03b7e2286,
+     last changed 2026-10-18T16:46:04Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Configuration reference
 
@@ -126,10 +126,16 @@ acme:
 |:---|:---|:---|
 | `enabled` | `false` | Serves ACME (RFC 8555) from the core, so certbot, acme.sh, win-acme and Caddy can get certificates from CertPilot. Off by default because it opens unauthenticated endpoints at `/acme/<template>/…` on the core's listener |
 | `external_url` | — | The address clients reach the core on. Every URL the server hands out is built from it, and a request is refused unless it was signed for one of them. Required, and must be `https`, in production mode. In development the address is taken from each request |
+| `challenges.http_port` | `80` | The port HTTP-01 is fetched from. Production refuses anything but 80, which is what RFC 8555 says; another port is for a test harness |
+| `challenges.dns_resolver` | system | `host:port` of the resolver both challenges look names up with, or `tcp://host:port` to ask it over TCP only. Set it to the resolver that sees your internal zones |
 
 Registration is closed. A client needs an external account binding credential,
-which an administrator creates for one template (`POST /api/v1/acme/credentials`),
-and the account it makes can only ask for what that template allows.
+which an administrator creates for one template (Settings → ACME clients, or
+`POST /api/v1/acme/credentials`), and the account it makes can only ask for
+what that template allows. A credential can also require proof of control: its
+client then proves each name by HTTP-01 or DNS-01 before anything is issued.
+HTTP-01 redirects are not followed, so a name whose web server redirects port
+80 to https has to use DNS-01.
 
 ### `auth`
 
