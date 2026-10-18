@@ -1,4 +1,4 @@
-<!-- Synced from docs/api-reference.md in certpilot/certpilot at 1fb03b7e2286, last changed 2026-10-18T16:46:04Z.
+<!-- Synced from docs/api-reference.md in certpilot/certpilot at ecad3c8e77b4, last changed 2026-10-18T17:24:57Z.
      Source heading: "Certificate Transparency". Edit it there, not here. -->
 
 This is the half of discovery a network scan cannot reach. A scan answers "what

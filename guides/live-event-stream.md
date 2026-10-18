@@ -1,4 +1,4 @@
-<!-- Synced from docs/api-reference.md in certpilot/certpilot at 1fb03b7e2286, last changed 2026-10-18T16:46:04Z.
+<!-- Synced from docs/api-reference.md in certpilot/certpilot at ecad3c8e77b4, last changed 2026-10-18T17:24:57Z.
      Source heading: "Live event stream". Edit it there, not here. -->
 
 Opens with a `retry:` directive and a `snapshot` event carrying current
