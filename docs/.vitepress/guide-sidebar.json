@@ -120,6 +120,10 @@
         "link": "/agent"
       },
       {
+        "text": "ACME clients, no agent",
+        "link": "/acme-server"
+      },
+      {
         "text": "All platforms",
         "link": "/platforms/"
       },

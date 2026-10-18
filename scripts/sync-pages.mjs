@@ -123,6 +123,7 @@ const PAGES = [
   { source: 'troubleshooting.md', sentinel: '# Troubleshooting' },
   { source: 'status.md', sentinel: '# Implementation status' },
   { source: 'templates.md', sentinel: '# Certificate templates' },
+  { source: 'acme-server.md', sentinel: '# The ACME server' },
 
   // The walkthroughs. Sentinels are the H1: they are the only headings on those
   // pages that are not shared with a sibling — every one of them has a
