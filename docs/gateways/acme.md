@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-09-26T16:23:02Z
+lastUpdated: 2026-10-18T16:50:02Z
 source:
   repo: certpilot/certpilot
   path: docs/gateways/acme.md
-  commit: 51f86f743471b396830863eeb47a93b0947e281a
+  commit: 924a408c35ec75e6908892086698aca6cf5dbff9
 ---
 
-<!-- Synced from docs/gateways/acme.md in certpilot/certpilot at 51f86f743471,
-     last changed 2026-09-26T16:23:02Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/gateways/acme.md in certpilot/certpilot at 924a408c35ec,
+     last changed 2026-10-18T16:50:02Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # The ACME gateway
 
@@ -19,6 +19,9 @@ Implemented by
 [`certpilot-gateway-acme`](https://github.com/certpilot/certpilot-gateway-acme),
 against the `provider.v1` contract in
 [`certpilot-gateway-sdk`](https://github.com/certpilot/certpilot-gateway-sdk).
+
+This page is CertPilot as an ACME client of a CA. For ACME clients getting
+certificates from CertPilot, see [the ACME server](/acme-server).
 
 Two things shape how this gateway is used, and both are properties of ACME
 rather than of CertPilot.

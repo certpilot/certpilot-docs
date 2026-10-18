@@ -3828,8 +3828,168 @@
     "operator",
     "admin"
   ],
-  "route_count": 126,
+  "route_count": 129,
   "routes": [
+    {
+      "auth": "bearer",
+      "display_token": false,
+      "handler": "acmeHandler.List",
+      "method": "GET",
+      "min_role": "admin",
+      "note": "",
+      "path": "/api/v1/acme/credentials",
+      "responses": [
+        {
+          "status": 200,
+          "shape": "object",
+          "keys": [
+            {
+              "name": "data",
+              "type": "any",
+              "required": false
+            },
+            {
+              "name": "enabled",
+              "type": "any",
+              "required": false
+            }
+          ]
+        },
+        {
+          "status": 404
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the ACME credentials",
+            "could not read the templates"
+          ]
+        }
+      ],
+      "section": "ACME credentials",
+      "source_line": 411
+    },
+    {
+      "auth": "bearer",
+      "display_token": false,
+      "handler": "acmeHandler.Create",
+      "method": "POST",
+      "min_role": "admin",
+      "note": "",
+      "path": "/api/v1/acme/credentials",
+      "request": {
+        "name": "mintACMECredentialRequest",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string",
+            "go_type": "string",
+            "required": false
+          },
+          {
+            "name": "template",
+            "type": "string",
+            "go_type": "string",
+            "required": false,
+            "doc": "Template is a slug or an id."
+          },
+          {
+            "name": "require_challenge",
+            "type": "boolean",
+            "go_type": "bool",
+            "required": false,
+            "doc": "RequireChallenge makes the client prove each name by HTTP-01 or DNS-01."
+          }
+        ]
+      },
+      "responses": [
+        {
+          "status": 201,
+          "shape": "object",
+          "keys": [
+            {
+              "name": "data",
+              "type": "any",
+              "required": false
+            },
+            {
+              "name": "directory_url",
+              "type": "any",
+              "required": false
+            },
+            {
+              "name": "hmac_key",
+              "type": "any",
+              "required": false
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "required": false,
+              "value": "Copy the hmac_key now. It is not kept in a form that can be shown again."
+            }
+          ]
+        },
+        {
+          "status": 400,
+          "errors": [
+            "a name and a template are required — the name is what identifies which client to revoke"
+          ]
+        },
+        {
+          "status": 404
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the template",
+            "could not generate a key",
+            "could not generate a key id",
+            "could not seal the key",
+            "could not store the credential"
+          ]
+        }
+      ],
+      "section": "ACME credentials",
+      "source_line": 412
+    },
+    {
+      "auth": "bearer",
+      "display_token": false,
+      "handler": "acmeHandler.Revoke",
+      "method": "DELETE",
+      "min_role": "admin",
+      "note": "",
+      "path": "/api/v1/acme/credentials/:id",
+      "path_params": [
+        "id"
+      ],
+      "responses": [
+        {
+          "status": 200,
+          "shape": "object",
+          "keys": [
+            {
+              "name": "message",
+              "type": "string",
+              "required": false,
+              "value": "Revoked. The account it made can no longer order, and no new one can be made with it."
+            }
+          ]
+        },
+        {
+          "status": 404
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the ACME credential"
+          ]
+        }
+      ],
+      "section": "ACME credentials",
+      "source_line": 413
+    },
     {
       "auth": "bearer",
       "display_token": true,
@@ -3896,7 +4056,7 @@
         }
       ],
       "section": "Agents",
-      "source_line": 362
+      "source_line": 383
     },
     {
       "auth": "bearer",
@@ -3933,7 +4093,7 @@
         }
       ],
       "section": "Agents",
-      "source_line": 380
+      "source_line": 401
     },
     {
       "auth": "bearer",
@@ -4008,7 +4168,7 @@
         }
       ],
       "section": "Agents",
-      "source_line": 381
+      "source_line": 402
     },
     {
       "auth": "bearer",
@@ -4039,7 +4199,7 @@
         }
       ],
       "section": "Agents",
-      "source_line": 382
+      "source_line": 403
     },
     {
       "auth": "bearer",
@@ -4077,7 +4237,7 @@
         }
       ],
       "section": "Agents",
-      "source_line": 373
+      "source_line": 394
     },
     {
       "auth": "bearer",
@@ -4179,7 +4339,7 @@
         }
       ],
       "section": "Agents",
-      "source_line": 374
+      "source_line": 395
     },
     {
       "auth": "bearer",
@@ -4210,7 +4370,7 @@
         }
       ],
       "section": "Agents",
-      "source_line": 375
+      "source_line": 396
     },
     {
       "auth": "bearer",
@@ -4269,7 +4429,7 @@
         }
       ],
       "section": "Agents",
-      "source_line": 367
+      "source_line": 388
     },
     {
       "auth": "agent-signature",
@@ -4335,10 +4495,16 @@
         },
         {
           "status": 404
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the agent"
+          ]
         }
       ],
       "section": "The agent API",
-      "source_line": 144
+      "source_line": 165
     },
     {
       "auth": "agent-signature",
@@ -4364,11 +4530,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the agent"
+          ]
         }
       ],
       "section": "The agent API",
-      "source_line": 153
+      "source_line": 174
     },
     {
       "auth": "agent-signature",
@@ -4445,7 +4614,11 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the agent",
+            "could not read the deployment job"
+          ]
         },
         {
           "status": 503,
@@ -4455,7 +4628,7 @@
         }
       ],
       "section": "The agent API",
-      "source_line": 154
+      "source_line": 175
     },
     {
       "auth": "agent-enrolment-token",
@@ -4565,7 +4738,7 @@
         }
       ],
       "section": "The agent API",
-      "source_line": 133
+      "source_line": 154
     },
     {
       "auth": "agent-signature",
@@ -4629,7 +4802,7 @@
         }
       ],
       "section": "The agent API",
-      "source_line": 136
+      "source_line": 157
     },
     {
       "auth": "agent-signature",
@@ -4700,11 +4873,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the agent"
+          ]
         }
       ],
       "section": "The agent API",
-      "source_line": 148
+      "source_line": 169
     },
     {
       "auth": "agent-signature",
@@ -4782,11 +4958,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the agent"
+          ]
         }
       ],
       "section": "The agent API",
-      "source_line": 140
+      "source_line": 161
     },
     {
       "auth": "bearer",
@@ -4845,7 +5024,7 @@
         }
       ],
       "section": "Agents",
-      "source_line": 352
+      "source_line": 373
     },
     {
       "auth": "bearer",
@@ -4880,11 +5059,14 @@
           ]
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the agent"
+          ]
         }
       ],
       "section": "Agents",
-      "source_line": 356
+      "source_line": 377
     },
     {
       "auth": "bearer",
@@ -4917,10 +5099,16 @@
         },
         {
           "status": 404
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the agent"
+          ]
         }
       ],
       "section": "Agents",
-      "source_line": 353
+      "source_line": 374
     },
     {
       "auth": "bearer",
@@ -4950,10 +5138,16 @@
         },
         {
           "status": 409
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the agent"
+          ]
         }
       ],
       "section": "Agents",
-      "source_line": 355
+      "source_line": 376
     },
     {
       "auth": "bearer",
@@ -4988,7 +5182,7 @@
         }
       ],
       "section": "Audit record integrity",
-      "source_line": 197
+      "source_line": 218
     },
     {
       "auth": "none",
@@ -5074,7 +5268,7 @@
         }
       ],
       "section": "Sign-in discovery",
-      "source_line": 118
+      "source_line": 120
     },
     {
       "auth": "none",
@@ -5092,7 +5286,7 @@
         }
       ],
       "section": "Sign-in discovery",
-      "source_line": 104
+      "source_line": 106
     },
     {
       "auth": "none",
@@ -5143,7 +5337,7 @@
         }
       ],
       "section": "Sign-in discovery",
-      "source_line": 110
+      "source_line": 112
     },
     {
       "auth": "bearer",
@@ -5168,7 +5362,7 @@
         }
       ],
       "section": "The caller's own identity",
-      "source_line": 181
+      "source_line": 202
     },
     {
       "auth": "bearer",
@@ -5232,7 +5426,7 @@
         }
       ],
       "section": "The caller's own identity",
-      "source_line": 185
+      "source_line": 206
     },
     {
       "auth": "bearer",
@@ -5265,7 +5459,7 @@
         }
       ],
       "section": "CA Accounts \u0026 Gateways",
-      "source_line": 238
+      "source_line": 259
     },
     {
       "auth": "bearer",
@@ -5384,7 +5578,7 @@
         }
       ],
       "section": "CA Accounts \u0026 Gateways",
-      "source_line": 239
+      "source_line": 260
     },
     {
       "auth": "bearer",
@@ -5415,7 +5609,7 @@
         }
       ],
       "section": "CA Accounts \u0026 Gateways",
-      "source_line": 241
+      "source_line": 262
     },
     {
       "auth": "bearer",
@@ -5454,11 +5648,17 @@
           "status": 404
         },
         {
+          "status": 500,
+          "errors": [
+            "could not read the CA account"
+          ]
+        },
+        {
           "status": 503
         }
       ],
       "section": "CA Accounts \u0026 Gateways",
-      "source_line": 240
+      "source_line": 261
     },
     {
       "auth": "bearer",
@@ -5520,11 +5720,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the CA account"
+          ]
         }
       ],
       "section": "CA Accounts \u0026 Gateways",
-      "source_line": 244
+      "source_line": 265
     },
     {
       "auth": "bearer",
@@ -5557,7 +5760,7 @@
         }
       ],
       "section": "Certificate templates",
-      "source_line": 441
+      "source_line": 472
     },
     {
       "auth": "bearer",
@@ -5778,7 +5981,7 @@
         }
       ],
       "section": "Certificate templates",
-      "source_line": 443
+      "source_line": 474
     },
     {
       "auth": "bearer",
@@ -5811,11 +6014,14 @@
           "status": 409
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the certificate template"
+          ]
         }
       ],
       "section": "Certificate templates",
-      "source_line": 445
+      "source_line": 476
     },
     {
       "auth": "bearer",
@@ -5834,10 +6040,16 @@
         },
         {
           "status": 404
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the certificate template"
+          ]
         }
       ],
       "section": "Certificate templates",
-      "source_line": 442
+      "source_line": 473
     },
     {
       "auth": "bearer",
@@ -6060,11 +6272,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the certificate template"
+          ]
         }
       ],
       "section": "Certificate templates",
-      "source_line": 444
+      "source_line": 475
     },
     {
       "auth": "bearer",
@@ -6121,7 +6336,7 @@
         }
       ],
       "section": "Certificates",
-      "source_line": 200
+      "source_line": 221
     },
     {
       "auth": "bearer",
@@ -6266,7 +6481,7 @@
         }
       ],
       "section": "Certificates",
-      "source_line": 201
+      "source_line": 222
     },
     {
       "auth": "bearer",
@@ -6315,11 +6530,14 @@
           ]
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the certificate"
+          ]
         }
       ],
       "section": "Certificates",
-      "source_line": 215
+      "source_line": 236
     },
     {
       "auth": "bearer",
@@ -6340,10 +6558,16 @@
         },
         {
           "status": 404
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the certificate"
+          ]
         }
       ],
       "section": "Certificates",
-      "source_line": 202
+      "source_line": 223
     },
     {
       "auth": "bearer",
@@ -6399,11 +6623,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the certificate"
+          ]
         }
       ],
       "section": "Certificates",
-      "source_line": 205
+      "source_line": 226
     },
     {
       "auth": "bearer",
@@ -6448,11 +6675,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the certificate"
+          ]
         }
       ],
       "section": "Deployment",
-      "source_line": 334
+      "source_line": 355
     },
     {
       "auth": "bearer",
@@ -6489,11 +6719,14 @@
           ]
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the certificate"
+          ]
         }
       ],
       "section": "Certificates",
-      "source_line": 214
+      "source_line": 235
     },
     {
       "auth": "bearer",
@@ -6532,11 +6765,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the certificate"
+          ]
         }
       ],
       "section": "Certificates",
-      "source_line": 206
+      "source_line": 227
     },
     {
       "auth": "bearer",
@@ -6577,11 +6813,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the certificate"
+          ]
         }
       ],
       "section": "Renewal queue",
-      "source_line": 305
+      "source_line": 326
     },
     {
       "auth": "bearer",
@@ -6614,7 +6853,7 @@
             {
               "name": "certificate",
               "type": "Certificate",
-              "go_type": "*Certificate",
+              "go_type": "*store.Certificate",
               "required": false
             },
             {
@@ -6648,17 +6887,17 @@
           ]
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the certificate"
+          ]
         },
         {
-          "status": 502,
-          "errors": [
-            "the CA account this certificate was issued by could not be read"
-          ]
+          "status": 502
         }
       ],
       "section": "Certificates",
-      "source_line": 213
+      "source_line": 234
     },
     {
       "auth": "bearer",
@@ -6698,11 +6937,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the certificate"
+          ]
         }
       ],
       "section": "Deployment",
-      "source_line": 327
+      "source_line": 348
     },
     {
       "auth": "bearer",
@@ -6770,11 +7012,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the certificate"
+          ]
         }
       ],
       "section": "Deployment",
-      "source_line": 328
+      "source_line": 349
     },
     {
       "auth": "bearer",
@@ -6807,11 +7052,14 @@
           ]
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the certificate deployment"
+          ]
         }
       ],
       "section": "Deployment",
-      "source_line": 329
+      "source_line": 350
     },
     {
       "auth": "bearer",
@@ -6873,11 +7121,14 @@
           ]
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the certificate"
+          ]
         }
       ],
       "section": "Renewal queue",
-      "source_line": 307
+      "source_line": 328
     },
     {
       "auth": "bearer",
@@ -6942,7 +7193,7 @@
         }
       ],
       "section": "Cloud inventory",
-      "source_line": 291
+      "source_line": 312
     },
     {
       "auth": "bearer",
@@ -6995,7 +7246,7 @@
         }
       ],
       "section": "Cloud inventory",
-      "source_line": 284
+      "source_line": 305
     },
     {
       "auth": "bearer",
@@ -7068,7 +7319,7 @@
         }
       ],
       "section": "Cloud inventory",
-      "source_line": 285
+      "source_line": 306
     },
     {
       "auth": "bearer",
@@ -7097,11 +7348,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the cloud connection"
+          ]
         }
       ],
       "section": "Cloud inventory",
-      "source_line": 287
+      "source_line": 308
     },
     {
       "auth": "bearer",
@@ -7170,11 +7424,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the cloud connection"
+          ]
         }
       ],
       "section": "Cloud inventory",
-      "source_line": 286
+      "source_line": 307
     },
     {
       "auth": "bearer",
@@ -7226,7 +7483,10 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the cloud connection"
+          ]
         },
         {
           "status": 502,
@@ -7247,7 +7507,7 @@
         }
       ],
       "section": "Cloud inventory",
-      "source_line": 290
+      "source_line": 311
     },
     {
       "auth": "bearer",
@@ -7331,11 +7591,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the cloud certificate"
+          ]
         }
       ],
       "section": "Cloud inventory",
-      "source_line": 292
+      "source_line": 313
     },
     {
       "auth": "bearer",
@@ -7389,7 +7652,7 @@
         }
       ],
       "section": "Certificate Transparency",
-      "source_line": 278
+      "source_line": 299
     },
     {
       "auth": "bearer",
@@ -7437,7 +7700,7 @@
         }
       ],
       "section": "Certificate Transparency",
-      "source_line": 273
+      "source_line": 294
     },
     {
       "auth": "bearer",
@@ -7503,7 +7766,7 @@
         }
       ],
       "section": "Certificate Transparency",
-      "source_line": 274
+      "source_line": 295
     },
     {
       "auth": "bearer",
@@ -7532,11 +7795,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the CT monitor"
+          ]
         }
       ],
       "section": "Certificate Transparency",
-      "source_line": 276
+      "source_line": 297
     },
     {
       "auth": "bearer",
@@ -7599,11 +7865,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the CT monitor"
+          ]
         }
       ],
       "section": "Certificate Transparency",
-      "source_line": 275
+      "source_line": 296
     },
     {
       "auth": "bearer",
@@ -7650,7 +7919,10 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the CT monitor"
+          ]
         },
         {
           "status": 502,
@@ -7671,7 +7943,7 @@
         }
       ],
       "section": "Certificate Transparency",
-      "source_line": 277
+      "source_line": 298
     },
     {
       "auth": "bearer",
@@ -7730,7 +8002,7 @@
         }
       ],
       "section": "Dashboard",
-      "source_line": 190
+      "source_line": 211
     },
     {
       "auth": "bearer",
@@ -7763,7 +8035,7 @@
         }
       ],
       "section": "Dashboard",
-      "source_line": 189
+      "source_line": 210
     },
     {
       "auth": "bearer",
@@ -7784,7 +8056,7 @@
         }
       ],
       "section": "Dashboard",
-      "source_line": 188
+      "source_line": 209
     },
     {
       "auth": "bearer",
@@ -7827,7 +8099,7 @@
         }
       ],
       "section": "Deployment",
-      "source_line": 317
+      "source_line": 338
     },
     {
       "auth": "bearer",
@@ -7900,7 +8172,7 @@
         }
       ],
       "section": "Deployment",
-      "source_line": 318
+      "source_line": 339
     },
     {
       "auth": "bearer",
@@ -7929,11 +8201,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the deployment target"
+          ]
         }
       ],
       "section": "Deployment",
-      "source_line": 323
+      "source_line": 344
     },
     {
       "auth": "bearer",
@@ -8011,11 +8286,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the deployment target"
+          ]
         }
       ],
       "section": "Deployment",
-      "source_line": 319
+      "source_line": 340
     },
     {
       "auth": "bearer",
@@ -8089,7 +8367,7 @@
         }
       ],
       "section": "Deployment",
-      "source_line": 344
+      "source_line": 365
     },
     {
       "auth": "bearer",
@@ -8120,10 +8398,16 @@
         },
         {
           "status": 409
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the deployment job"
+          ]
         }
       ],
       "section": "Deployment",
-      "source_line": 346
+      "source_line": 367
     },
     {
       "auth": "bearer",
@@ -8151,10 +8435,16 @@
         },
         {
           "status": 404
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the deployment job"
+          ]
         }
       ],
       "section": "Deployment",
-      "source_line": 345
+      "source_line": 366
     },
     {
       "auth": "bearer",
@@ -8260,11 +8550,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the discovery result"
+          ]
         }
       ],
       "section": "Discovery",
-      "source_line": 252
+      "source_line": 273
     },
     {
       "auth": "bearer",
@@ -8333,7 +8626,7 @@
         }
       ],
       "section": "Discovery",
-      "source_line": 260
+      "source_line": 281
     },
     {
       "auth": "bearer",
@@ -8456,7 +8749,7 @@
         }
       ],
       "section": "Discovery",
-      "source_line": 251
+      "source_line": 272
     },
     {
       "auth": "bearer",
@@ -8500,7 +8793,7 @@
         }
       ],
       "section": "Discovery",
-      "source_line": 255
+      "source_line": 276
     },
     {
       "auth": "bearer",
@@ -8560,11 +8853,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the discovery scan"
+          ]
         }
       ],
       "section": "Discovery",
-      "source_line": 256
+      "source_line": 277
     },
     {
       "auth": "bearer",
@@ -8597,10 +8893,16 @@
         },
         {
           "status": 404
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the discovery scan"
+          ]
         }
       ],
       "section": "Discovery",
-      "source_line": 259
+      "source_line": 280
     },
     {
       "auth": "bearer",
@@ -8638,7 +8940,7 @@
         }
       ],
       "section": "Discovery",
-      "source_line": 264
+      "source_line": 285
     },
     {
       "auth": "bearer",
@@ -8711,7 +9013,7 @@
         }
       ],
       "section": "Discovery",
-      "source_line": 265
+      "source_line": 286
     },
     {
       "auth": "bearer",
@@ -8740,11 +9042,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the discovery schedule"
+          ]
         }
       ],
       "section": "Discovery",
-      "source_line": 267
+      "source_line": 288
     },
     {
       "auth": "bearer",
@@ -8814,11 +9119,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the discovery schedule"
+          ]
         }
       ],
       "section": "Discovery",
-      "source_line": 266
+      "source_line": 287
     },
     {
       "auth": "bearer",
@@ -8865,11 +9173,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the discovery schedule"
+          ]
         }
       ],
       "section": "Discovery",
-      "source_line": 268
+      "source_line": 289
     },
     {
       "auth": "bearer",
@@ -8901,7 +9212,7 @@
         }
       ],
       "section": "Display Tokens",
-      "source_line": 400
+      "source_line": 431
     },
     {
       "auth": "bearer",
@@ -8963,7 +9274,7 @@
         }
       ],
       "section": "Display Tokens",
-      "source_line": 401
+      "source_line": 432
     },
     {
       "auth": "bearer",
@@ -8991,10 +9302,16 @@
         },
         {
           "status": 404
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not revoke the display token"
+          ]
         }
       ],
       "section": "Display Tokens",
-      "source_line": 402
+      "source_line": 433
     },
     {
       "auth": "bearer",
@@ -9013,7 +9330,7 @@
         }
       ],
       "section": "Live event stream",
-      "source_line": 174
+      "source_line": 195
     },
     {
       "auth": "bearer",
@@ -9042,7 +9359,7 @@
         }
       ],
       "section": "CA Accounts \u0026 Gateways",
-      "source_line": 245
+      "source_line": 266
     },
     {
       "auth": "bearer",
@@ -9060,7 +9377,7 @@
         }
       ],
       "section": "The caller's own identity",
-      "source_line": 180
+      "source_line": 201
     },
     {
       "auth": "bearer",
@@ -9098,7 +9415,7 @@
         }
       ],
       "section": "Custom metadata fields",
-      "source_line": 422
+      "source_line": 453
     },
     {
       "auth": "bearer",
@@ -9177,7 +9494,7 @@
         }
       ],
       "section": "Custom metadata fields",
-      "source_line": 423
+      "source_line": 454
     },
     {
       "auth": "bearer",
@@ -9212,11 +9529,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the metadata field"
+          ]
         }
       ],
       "section": "Custom metadata fields",
-      "source_line": 425
+      "source_line": 456
     },
     {
       "auth": "bearer",
@@ -9294,11 +9614,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the metadata field"
+          ]
         }
       ],
       "section": "Custom metadata fields",
-      "source_line": 424
+      "source_line": 455
     },
     {
       "auth": "bearer",
@@ -9341,7 +9664,7 @@
         }
       ],
       "section": "Notification channels",
-      "source_line": 409
+      "source_line": 440
     },
     {
       "auth": "bearer",
@@ -9421,7 +9744,7 @@
         }
       ],
       "section": "Notification channels",
-      "source_line": 410
+      "source_line": 441
     },
     {
       "auth": "bearer",
@@ -9451,11 +9774,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the notification channel"
+          ]
         }
       ],
       "section": "Notification channels",
-      "source_line": 412
+      "source_line": 443
     },
     {
       "auth": "bearer",
@@ -9531,11 +9857,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the notification channel"
+          ]
         }
       ],
       "section": "Notification channels",
-      "source_line": 411
+      "source_line": 442
     },
     {
       "auth": "bearer",
@@ -9569,6 +9898,12 @@
           "status": 404
         },
         {
+          "status": 500,
+          "errors": [
+            "could not read the notification channel"
+          ]
+        },
+        {
           "status": 502,
           "shape": "object",
           "keys": [
@@ -9581,7 +9916,7 @@
         }
       ],
       "section": "Notification channels",
-      "source_line": 415
+      "source_line": 446
     },
     {
       "auth": "bearer",
@@ -9631,7 +9966,7 @@
         }
       ],
       "section": "PKI / CA Management",
-      "source_line": 218
+      "source_line": 239
     },
     {
       "auth": "bearer",
@@ -9703,7 +10038,7 @@
         }
       ],
       "section": "PKI / CA Management",
-      "source_line": 219
+      "source_line": 240
     },
     {
       "auth": "bearer",
@@ -9734,7 +10069,7 @@
         }
       ],
       "section": "PKI / CA Management",
-      "source_line": 228
+      "source_line": 249
     },
     {
       "auth": "bearer",
@@ -9755,10 +10090,16 @@
         },
         {
           "status": 404
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the CA authority"
+          ]
         }
       ],
       "section": "PKI / CA Management",
-      "source_line": 225
+      "source_line": 246
     },
     {
       "auth": "bearer",
@@ -9795,7 +10136,7 @@
         }
       ],
       "section": "PKI / CA Management",
-      "source_line": 233
+      "source_line": 254
     },
     {
       "auth": "bearer",
@@ -9859,11 +10200,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the CA authority"
+          ]
         }
       ],
       "section": "PKI / CA Management",
-      "source_line": 232
+      "source_line": 253
     },
     {
       "auth": "bearer",
@@ -9899,7 +10243,7 @@
         }
       ],
       "section": "PKI / CA Management",
-      "source_line": 234
+      "source_line": 255
     },
     {
       "auth": "bearer",
@@ -9930,7 +10274,7 @@
         }
       ],
       "section": "PKI / CA Management",
-      "source_line": 226
+      "source_line": 247
     },
     {
       "auth": "bearer",
@@ -9953,11 +10297,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the CA authority"
+          ]
         }
       ],
       "section": "PKI / CA Management",
-      "source_line": 227
+      "source_line": 248
     },
     {
       "auth": "bearer",
@@ -10008,11 +10355,14 @@
           "status": 404
         },
         {
-          "status": 500
+          "status": 500,
+          "errors": [
+            "could not read the CA authority"
+          ]
         }
       ],
       "section": "PKI / CA Management",
-      "source_line": 235
+      "source_line": 256
     },
     {
       "auth": "bearer",
@@ -10062,7 +10412,7 @@
         }
       ],
       "section": "PKI / CA Management",
-      "source_line": 224
+      "source_line": 245
     },
     {
       "auth": "bearer",
@@ -10089,7 +10439,7 @@
         }
       ],
       "section": "PKI / CA Management",
-      "source_line": 229
+      "source_line": 250
     },
     {
       "auth": "bearer",
@@ -10122,7 +10472,7 @@
         }
       ],
       "section": "Policies",
-      "source_line": 428
+      "source_line": 459
     },
     {
       "auth": "bearer",
@@ -10195,7 +10545,7 @@
         }
       ],
       "section": "Policies",
-      "source_line": 430
+      "source_line": 461
     },
     {
       "auth": "bearer",
@@ -10226,7 +10576,7 @@
         }
       ],
       "section": "Policies",
-      "source_line": 432
+      "source_line": 463
     },
     {
       "auth": "bearer",
@@ -10247,10 +10597,16 @@
         },
         {
           "status": 404
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the policy"
+          ]
         }
       ],
       "section": "Policies",
-      "source_line": 429
+      "source_line": 460
     },
     {
       "auth": "bearer",
@@ -10326,7 +10682,7 @@
         }
       ],
       "section": "Policies",
-      "source_line": 431
+      "source_line": 462
     },
     {
       "auth": "bearer",
@@ -10358,7 +10714,7 @@
         }
       ],
       "section": "Deployment",
-      "source_line": 338
+      "source_line": 359
     },
     {
       "auth": "bearer",
@@ -10377,7 +10733,7 @@
         }
       ],
       "section": "Deployment",
-      "source_line": 342
+      "source_line": 363
     },
     {
       "auth": "bearer",
@@ -10428,7 +10784,7 @@
         }
       ],
       "section": "Deployment",
-      "source_line": 339
+      "source_line": 360
     },
     {
       "auth": "bearer",
@@ -10495,7 +10851,7 @@
         }
       ],
       "section": "Renewal queue",
-      "source_line": 297
+      "source_line": 318
     },
     {
       "auth": "bearer",
@@ -10526,10 +10882,16 @@
         },
         {
           "status": 409
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the renewal job"
+          ]
         }
       ],
       "section": "Renewal queue",
-      "source_line": 302
+      "source_line": 323
     },
     {
       "auth": "bearer",
@@ -10562,10 +10924,16 @@
         },
         {
           "status": 404
+        },
+        {
+          "status": 500,
+          "errors": [
+            "could not read the renewal job"
+          ]
         }
       ],
       "section": "Renewal queue",
-      "source_line": 298
+      "source_line": 319
     },
     {
       "auth": "bearer",
@@ -10598,7 +10966,7 @@
         }
       ],
       "section": "Accounts",
-      "source_line": 389
+      "source_line": 420
     },
     {
       "auth": "bearer",
@@ -10681,7 +11049,7 @@
         }
       ],
       "section": "Accounts",
-      "source_line": 390
+      "source_line": 421
     },
     {
       "auth": "bearer",
@@ -10746,7 +11114,7 @@
         }
       ],
       "section": "Accounts",
-      "source_line": 391
+      "source_line": 422
     },
     {
       "auth": "bearer",
@@ -10785,12 +11153,13 @@
         {
           "status": 500,
           "errors": [
+            "could not read the account",
             "could not generate a password"
           ]
         }
       ],
       "section": "Accounts",
-      "source_line": 394
+      "source_line": 425
     },
     {
       "auth": "none",
@@ -10801,7 +11170,7 @@
       "note": "Public, and deliberately says nothing about internals.",
       "path": "/healthz",
       "section": "Health",
-      "source_line": 73
+      "source_line": 75
     }
   ],
   "source": "core/api/router.go"

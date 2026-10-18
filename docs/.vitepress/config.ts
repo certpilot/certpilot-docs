@@ -91,7 +91,7 @@ export default withMermaid(
         { text: 'Walkthroughs', link: '/walkthroughs/', activeMatch: '^/walkthroughs' },
         { text: 'Deploy', link: '/configuration', activeMatch: '^/(configuration|database|operations|security)' },
         { text: 'Operate', link: '/discovery', activeMatch: '^/(discovery|monitoring|deployment|templates|posture|troubleshooting)' },
-        { text: 'Integrate', link: '/agent', activeMatch: '^/(agent|platforms|gateways|writing-a-gateway)' },
+        { text: 'Integrate', link: '/agent', activeMatch: '^/(agent|acme-server|platforms|gateways|writing-a-gateway)' },
         {
           text: 'Reference',
           activeMatch: '^/api/',

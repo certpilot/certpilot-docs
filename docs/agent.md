@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-11T18:48:29Z
+lastUpdated: 2026-10-18T16:58:03Z
 source:
   repo: certpilot/certpilot-agent
   path: docs/agent.md
-  commit: 8eea1ef7e94a2d32b1e053bf5cdbf1d62e8eee4b
+  commit: 723415db60f578c16f624aafee1ec20f0e27c499
 ---
 
-<!-- Synced from docs/agent.md in certpilot/certpilot-agent at 8eea1ef7e94a,
-     last changed 2026-10-11T18:48:29Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/agent.md in certpilot/certpilot-agent at 723415db60f5,
+     last changed 2026-10-18T16:58:03Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # The host agent
 
@@ -29,7 +29,7 @@ Everything else here follows from that.
 - [Installing where the server reads](#installing-where-the-server-reads)
 - [Inventory](#inventory)
 - [Running it](#running-it)
-- [When the agent can't run as shipped](#when-the-agent-cant-run-as-shipped)
+- [When the agent cannot run as shipped](#when-the-agent-cannot-run-as-shipped)
 - [What can go wrong](#what-can-go-wrong)
 
 ---
@@ -634,7 +634,7 @@ Where it does not, run it as a user that owns the certificate directory.
 
 ---
 
-## When the agent can't run as shipped
+## When the agent cannot run as shipped
 
 Most hosts that "can't run the agent" can, with one setting changed.
 
