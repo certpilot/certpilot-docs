@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-18T17:24:57Z
+lastUpdated: 2026-10-18T17:50:32Z
 source:
   repo: certpilot/certpilot
   path: docs/acme-server.md
-  commit: ecad3c8e77b4233850d3f8b2096e5bbec152606d
+  commit: e3af15b7b0a7baab652de4ae6f109b07b818ff02
 ---
 
-<!-- Synced from docs/acme-server.md in certpilot/certpilot at ecad3c8e77b4,
-     last changed 2026-10-18T17:24:57Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/acme-server.md in certpilot/certpilot at e3af15b7b0a7,
+     last changed 2026-10-18T17:50:32Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # The ACME server
 
@@ -80,8 +80,31 @@ lego --server "$DIRECTORY_URL" --email ops@example.com --accept-tos \
   --domains web.example.com --http --http.webroot /var/www/html run
 ```
 
-lego and acme.sh refuse a directory that is not `https`. All three are run
-against the server in CI, as released (`make live-acme`).
+lego, acme.sh and win-acme refuse a directory that is not `https`. All of
+these, and Caddy, are run against the server in CI, as released: certbot,
+lego, acme.sh and Caddy on Linux (`make live-acme`), and win-acme on Windows
+(`make live-winacme`).
+
+Caddy needs no command. Point its global options at the directory and it
+obtains a certificate for each site as it starts:
+
+```caddyfile
+{
+	acme_ca https://certpilot.example.com/acme/internal-web/directory
+	acme_eab {
+		key_id <kid>
+		mac_key <hmac-key>
+	}
+}
+```
+
+win-acme, unattended:
+
+```powershell
+wacs.exe --baseuri $DirectoryUrl --source manual --host web.example.com `
+  --accepttos --emailaddress ops@example.com `
+  --eab-key-identifier $Kid --eab-key $HmacKey
+```
 
 ## What the template decides
 
@@ -170,8 +193,6 @@ be signed by both the old key and the new one.
 - No open registration. Every client needs a credential.
 - Names only: a `dns` identifier has to be a host name, and IP address
   identifiers (RFC 8738) are not accepted.
-- Caddy and win-acme speak the same protocol and should work; neither has been
-  run against it.
 - A client renews its own certificates. CertPilot cannot renew one early for
   it, except by revoking it, which renewalInfo then tells the client to
   replace.
