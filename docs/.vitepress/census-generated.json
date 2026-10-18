@@ -1,6 +1,6 @@
 {
-  "routeCount": 126,
-  "sectionCount": 22,
+  "routeCount": 129,
+  "sectionCount": 23,
   "roles": [
     "viewer",
     "auditor",
@@ -10,11 +10,11 @@
   "methods": [
     {
       "method": "GET",
-      "count": 49
+      "count": 50
     },
     {
       "method": "POST",
-      "count": 46
+      "count": 47
     },
     {
       "method": "PATCH",
@@ -26,11 +26,11 @@
     },
     {
       "method": "DELETE",
-      "count": 19
+      "count": 20
     }
   ],
   "displayTokenReadable": 41,
-  "documentedBodies": 42,
+  "documentedBodies": 43,
   "modelCount": 31,
   "source": "core/api/router.go",
   "sections": [
@@ -100,6 +100,10 @@
     },
     {
       "text": "Display Tokens",
+      "count": 3
+    },
+    {
+      "text": "ACME credentials",
       "count": 3
     },
     {

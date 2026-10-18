@@ -1,4 +1,4 @@
-<!-- Synced from docs/api-reference.md in certpilot/certpilot at 51f86f743471, last changed 2026-09-26T16:23:02Z.
+<!-- Synced from docs/api-reference.md in certpilot/certpilot at 1fb03b7e2286, last changed 2026-10-18T16:46:04Z.
      Source heading: "Renewal queue". Edit it there, not here. -->
 
 Renewal is the only part of this system that changes the world. Everything else

@@ -85,6 +85,11 @@
     "count": 3
   },
   {
+    "text": "ACME credentials",
+    "link": "/api/reference/acme-credentials",
+    "count": 3
+  },
+  {
     "text": "Accounts",
     "link": "/api/reference/accounts",
     "count": 4
