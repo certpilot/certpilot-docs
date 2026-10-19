@@ -144,6 +144,10 @@ jobs:
           CERTPILOT_REF: ${{ github.event.client_payload.repo == 'certpilot-agent' && 'main' || github.event.client_payload.sha }}
       - run: npm run sync:guides
         env:
+          # sync-guides asks the API which commit last changed
+          # api-reference.md. Unauthenticated, that shares the runner IP's rate
+          # limit and failed with a 403 (run 39300981648).
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CERTPILOT_REF: ${{ github.event.client_payload.repo == 'certpilot-agent' && 'main' || github.event.client_payload.sha }}
 
       - uses: peter-evans/create-pull-request@v7
