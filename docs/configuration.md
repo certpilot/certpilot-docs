@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-18T17:24:57Z
+lastUpdated: 2026-10-20T06:51:26Z
 source:
   repo: certpilot/certpilot
   path: docs/configuration.md
-  commit: ecad3c8e77b4233850d3f8b2096e5bbec152606d
+  commit: 7fcfe3743a967c1e199d475b59ae97a6ecbd09c8
 ---
 
-<!-- Synced from docs/configuration.md in certpilot/certpilot at ecad3c8e77b4,
-     last changed 2026-10-18T17:24:57Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/configuration.md in certpilot/certpilot at 7fcfe3743a96,
+     last changed 2026-10-20T06:51:26Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Configuration reference
 
@@ -113,6 +113,7 @@ server:
 | `port` | `8080` | HTTP port |
 | `mode` | `development` | See [production mode](#production-mode) |
 | `allowed_origins` | — | Browser origins permitted to call the API. Must name the frontend explicitly — a wildcard is not accepted alongside credentials |
+| `trusted_proxies` | none | Addresses or CIDR ranges of the reverse proxies in front of the core. `X-Forwarded-For` is believed only when it comes from one of them, and only for the entries they added, so a client cannot choose the address its rate limit and its audit entries are recorded under. Empty means a client is the address it connected from. The compose files give the console's nginx a fixed address, `172.31.249.10`, and trust that. Add a load balancer's address if there is one in front. `0.0.0.0/0` and `::/0` are refused in production |
 
 ### `acme`
 
@@ -349,6 +350,7 @@ locally and dangerous deployed:
 | Neither `auth.jwks_url` nor `auth.jwt_secret` | Nothing would verify anything |
 | `plugins.tls.insecure: true` | The gateway channel carries CSRs, private keys and CA credentials |
 | `"*"` in `server.allowed_origins` | A wildcard with credentials is not a CORS configuration, it is an open door |
+| `0.0.0.0/0` or `::/0` in `server.trusted_proxies` | Any client could choose the address it is rate-limited and audited under |
 | No database connection string | An in-memory store would come up healthy and lose every certificate it issued |
 
 The core **refuses to start**, rather than warning. A warning in a log nobody
