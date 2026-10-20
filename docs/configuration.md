@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-20T06:51:26Z
+lastUpdated: 2026-10-20T07:05:03Z
 source:
   repo: certpilot/certpilot
   path: docs/configuration.md
-  commit: 7fcfe3743a967c1e199d475b59ae97a6ecbd09c8
+  commit: ca22d272792a71d78b90e9a1cf9add0130d9a972
 ---
 
-<!-- Synced from docs/configuration.md in certpilot/certpilot at 7fcfe3743a96,
-     last changed 2026-10-20T06:51:26Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/configuration.md in certpilot/certpilot at ca22d272792a,
+     last changed 2026-10-20T07:05:03Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Configuration reference
 
@@ -258,6 +258,10 @@ logging:
   level: "info"     # debug | info | warn | error
   format: "text"    # text | json
 ```
+
+Both default to the values shown. `json` writes one object per line for a log
+pipeline. Any other value is refused at start-up. Before v0.3.1 both settings
+were read and then ignored, so the core always logged text at `debug`.
 
 ---
 
