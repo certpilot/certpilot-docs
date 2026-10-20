@@ -58,9 +58,9 @@ import guide from '../guide-sidebar.json'
       <aside class="first-run" aria-labelledby="first-run-head">
         <p class="first-run-head" id="first-run-head">Start here</p>
         <div class="first-run-code">
-          <code>base=https://raw.githubusercontent.com/certpilot/certpilot/v0.3.0/deploy</code>
+          <code>base=https://raw.githubusercontent.com/certpilot/certpilot/v0.4.0/deploy</code>
           <code>curl -O $base/docker-compose.quickstart.yml -O $base/config.quickstart.yaml</code>
-          <code>export CERTPILOT_VERSION=0.3.0 GATEWAY_VERSION=0.4.1</code>
+          <code>export CERTPILOT_VERSION=0.4.0 GATEWAY_VERSION=0.4.2</code>
           <code>docker compose -f docker-compose.quickstart.yml up -d</code>
         </div>
         <p class="first-run-note">
