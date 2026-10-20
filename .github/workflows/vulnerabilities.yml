@@ -1,0 +1,30 @@
+name: Vulnerabilities
+
+# Known vulnerabilities in what this is built from: the Go modules and the
+# standard library it calls, its npm dependencies, and the image it ships.
+#
+# On every pull request and push to main, and weekly: an advisory published
+# in a quiet week is still a vulnerability in what people are running, and
+# nothing else here would say so until somebody happened to look. That is
+# how nine standard-library advisories and an end-of-life base image reached
+# a release unnoticed.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  npm:
+    name: npm audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # High and critical only: a moderate advisory in a dev-server dependency
+      # is worth an update, not a red build.
+      - run: npm audit --audit-level=high
