@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-10T17:20:52Z
+lastUpdated: 2026-10-20T07:00:23Z
 source:
   repo: certpilot/certpilot
   path: docs/operations.md
-  commit: c4b74b1f34b618917bf973924075c3a4bc9c69ef
+  commit: 533321caaeaebb17199706fcef6e5e22015af855
 ---
 
-<!-- Synced from docs/operations.md in certpilot/certpilot at c4b74b1f34b6,
-     last changed 2026-10-10T17:20:52Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/operations.md in certpilot/certpilot at 533321caaeae,
+     last changed 2026-10-20T07:00:23Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Operations
 
@@ -201,6 +201,15 @@ it must come *before* the generic `/api/` one.
 
 The core also sends `X-Accel-Buffering: no` on that route as a second line of
 defence.
+
+The shipped nginx also sends the console's security headers: a Content
+Security Policy that allows scripts and styles only from its own origin and
+refuses framing, `X-Content-Type-Options: nosniff`, `Referrer-Policy:
+no-referrer` (a wall display's token is in its URL), and HSTS. HSTS is sent
+only when the request arrived with `X-Forwarded-Proto: https`, so the proxy
+that ends TLS in front of it has to set that header. A proxy of your own in
+place of the shipped one should send the same set;
+`scripts/check-console-headers.sh <console URL>` checks them.
 
 ---
 
