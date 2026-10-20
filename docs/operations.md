@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-20T07:09:56Z
+lastUpdated: 2026-10-20T07:14:27Z
 source:
   repo: certpilot/certpilot
   path: docs/operations.md
-  commit: 013023ccf376fd21bcf61328533fd8d23702423a
+  commit: 282491bfd1145dd2b6dfbbec0e1b5a60c6e86c55
 ---
 
-<!-- Synced from docs/operations.md in certpilot/certpilot at 013023ccf376,
-     last changed 2026-10-20T07:09:56Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/operations.md in certpilot/certpilot at 282491bfd114,
+     last changed 2026-10-20T07:14:27Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Operations
 
@@ -440,6 +440,60 @@ releases in the upgrade drill, and those have no `/readyz`.
 
 The last one deserves attention. A monitoring system whose alerting is broken
 is worse than none, because it is trusted.
+
+### Metrics
+
+Set `metrics.listen` and the core serves Prometheus metrics at `/metrics` on
+that address, separate from the API.
+
+| Series | Means |
+|:---|:---|
+| `certpilot_certificates{state}` | Managed certificates: `healthy`, `expiring` (inside its renewal lead), `expired` |
+| `certpilot_authorities{state}` | Monitored CAs: `healthy`, `warning`, `critical`, `expired`, `unknown` |
+| `certpilot_renewal_jobs{status}` | Renewal jobs `PENDING`, `RUNNING`, `FAILED`. `FAILED` counts every terminal failure on record, so alert on its increase |
+| `certpilot_renewal_jobs_escalated` | Renewal jobs that need a person |
+| `certpilot_deployment_jobs{status}` | Deployment jobs `PENDING`, `RUNNING`, `FAILED` |
+| `certpilot_gateway_connected{gateway}` | 1 if connected. A configured gateway that has never connected reads 0 |
+| `certpilot_store_up` | 0 if the scrape could not read the database; the estate series are absent then rather than zero |
+| `certpilot_http_requests_total{method,route,code}` | Requests, by route template, so one series per route rather than per id |
+| `certpilot_http_request_duration_seconds{method,route}` | Latency. The event stream is excluded |
+
+Plus the standard `go_*` and `process_*` series. A request with a method other
+than the standard seven is counted as `OTHER`, so a client cannot create series.
+
+The estate is read from the database at most once every ten seconds, however
+often it is scraped; concurrent scrapes share that read. With
+`metrics.bearer_token` set, Prometheus scrapes it like this:
+
+```yaml
+scrape_configs:
+  - job_name: certpilot
+    authorization:
+      credentials_file: /etc/prometheus/certpilot-token
+    static_configs:
+      - targets: ["core:9464"]
+```
+
+The estate series are read from the database at scrape time, so every replica
+reports the same values: aggregate them with `max`, not `sum`. Request series
+are per replica.
+
+Alerts worth having from day one:
+
+```yaml
+- alert: CertPilotAuthorityCritical
+  expr: max(certpilot_authorities{state=~"critical|expired"}) > 0
+- alert: CertPilotCertificatesExpired
+  expr: max(certpilot_certificates{state="expired"}) > 0
+- alert: CertPilotRenewalsFailing
+  expr: increase(max(certpilot_renewal_jobs{status="FAILED"})[1h:]) > 0
+- alert: CertPilotGatewayDown
+  expr: max by (gateway) (certpilot_gateway_connected) == 0
+  for: 10m
+- alert: CertPilotCannotReadItsDatabase
+  expr: max(certpilot_store_up) == 0
+  for: 2m
+```
 
 ### Logs
 

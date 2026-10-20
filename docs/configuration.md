@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-20T07:05:03Z
+lastUpdated: 2026-10-20T07:14:27Z
 source:
   repo: certpilot/certpilot
   path: docs/configuration.md
-  commit: ca22d272792a71d78b90e9a1cf9add0130d9a972
+  commit: 282491bfd1145dd2b6dfbbec0e1b5a60c6e86c55
 ---
 
-<!-- Synced from docs/configuration.md in certpilot/certpilot at ca22d272792a,
-     last changed 2026-10-20T07:05:03Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/configuration.md in certpilot/certpilot at 282491bfd114,
+     last changed 2026-10-20T07:14:27Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Configuration reference
 
@@ -250,6 +250,19 @@ lead stops making sense well before the end of that. Where a CA publishes RFC
 9773 renewal information, the ACME gateway reports the window the CA suggests,
 which is both better timed and what lets a CA drain a mass-revocation event
 gradually instead of every client renewing at once.
+
+### `metrics`
+
+```yaml
+metrics:
+  listen: ":9464"
+  bearer_token: "${CERTPILOT_METRICS_TOKEN}"
+```
+
+| Key | Default | |
+|:---|:---|:---|
+| `listen` | none | A `host:port` on which to serve Prometheus metrics at `/metrics`, on a listener of its own. Empty serves none. The endpoint is unauthenticated, as Prometheus expects, so bind it where only the scraper reaches it and do not publish it through the console's proxy. An address already in use stops the core from starting. See [operations.md](/operations#metrics) |
+| `bearer_token` | none | Required of every scrape as `Authorization: Bearer <token>` when set. Production refuses a `listen` address off loopback without one, because the estate's shape (which CAs are critical, which gateways are down) is not for the whole network |
 
 ### `logging`
 
