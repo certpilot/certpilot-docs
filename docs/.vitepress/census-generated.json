@@ -1,5 +1,5 @@
 {
-  "routeCount": 129,
+  "routeCount": 130,
   "sectionCount": 23,
   "roles": [
     "viewer",
@@ -10,7 +10,7 @@
   "methods": [
     {
       "method": "GET",
-      "count": 50
+      "count": 51
     },
     {
       "method": "POST",
@@ -36,7 +36,7 @@
   "sections": [
     {
       "text": "Health",
-      "count": 1
+      "count": 2
     },
     {
       "text": "Dashboard",

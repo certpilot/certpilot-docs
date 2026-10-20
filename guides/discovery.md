@@ -1,4 +1,4 @@
-<!-- Synced from docs/api-reference.md in certpilot/certpilot at ecad3c8e77b4, last changed 2026-10-18T17:24:57Z.
+<!-- Synced from docs/api-reference.md in certpilot/certpilot at 5a222b7f7600, last changed 2026-10-20T06:55:58Z.
      Source heading: "Discovery". Edit it there, not here. -->
 
 Scanning is operator-gated because it opens connections to third-party
