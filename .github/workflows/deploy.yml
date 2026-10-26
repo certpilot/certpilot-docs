@@ -51,7 +51,7 @@ jobs:
       # finds it and does nothing, and because when it is missing the failure
       # names the real problem instead of the bare "Get Pages site failed"
       # you get without it.
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
         with:
           enablement: true
 
