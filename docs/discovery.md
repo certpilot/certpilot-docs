@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-04T11:47:47Z
+lastUpdated: 2026-11-12T16:03:03Z
 source:
   repo: certpilot/certpilot
   path: docs/discovery.md
-  commit: 15aa11e00acd574a6e9558cdcf8d44a52d1c27c6
+  commit: defc64dbf5cbf911349fa13c305cfe436912218c
 ---
 
-<!-- Synced from docs/discovery.md in certpilot/certpilot at 15aa11e00acd,
-     last changed 2026-10-04T11:47:47Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/discovery.md in certpilot/certpilot at defc64dbf5cb,
+     last changed 2026-11-12T16:03:03Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # Discovery
 
@@ -130,8 +130,13 @@ The monitor polls every minute for monitors that are due, matches what it finds
 against the inventory by serial number, and raises `ct.unmanaged` for anything
 it does not recognise. Serials are compared in one normalised form, because the
 index pads them and changes their case and the inventory does neither. A
-certificate's precertificate is recorded and marked, not counted as a second
-certificate.
+certificate is counted once, whether the CA logged it once or as a
+precertificate and a final certificate; a precertificate is recorded and marked.
+
+The monitor sees what crt.sh has indexed, and crt.sh does not index every
+certificate. In November 2026 it had no record of the Let's Encrypt certificate
+`badssl.com` was serving. A clean check means crt.sh reported nothing unknown,
+not that nothing was issued.
 
 `make live-ct` runs this daily against crt.sh.
 
