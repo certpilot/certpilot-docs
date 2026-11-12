@@ -1,14 +1,14 @@
 ---
 editLink: false
-lastUpdated: 2026-10-20T07:49:18Z
+lastUpdated: 2026-11-12T16:32:34Z
 source:
   repo: certpilot/certpilot
   path: docs/comparison.md
-  commit: c4d89d4d8133895aef537fd51e8f69b4fe7c2f63
+  commit: 89e33dbc35d227e8d1d2df22332399ae070aca93
 ---
 
-<!-- Synced from docs/comparison.md in certpilot/certpilot at c4d89d4d8133,
-     last changed 2026-10-20T07:49:18Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
+<!-- Synced from docs/comparison.md in certpilot/certpilot at 89e33dbc35d2,
+     last changed 2026-11-12T16:32:34Z, by scripts/sync-pages.mjs. Edit it there, not here. -->
 
 # How CertPilot compares
 
@@ -110,7 +110,7 @@ it, and the weekly documentation run does the same.
 
 | Product | Vendor | Editions and deployment models, as documented | Documentation reviewed |
 |:--|:--|:--|:--|
-| CertPilot | Open source, Apache 2.0 | Self-hosted only, as containers or binaries. The latest core release is v0.4.0 | This repository at the commit this page was published from |
+| CertPilot | Open source, Apache 2.0 | Self-hosted only, as containers or binaries. The latest core release is v0.4.1 | This repository at the commit this page was published from |
 | Keyfactor Command | Keyfactor | **Keyfactor Command** installed on premises, and **Command SaaS**, "a cloud-based Certificate Lifecycle Management platform" ([K1](#sources)) | On-premises documentation suite v26.2.2, and v25.5.2 for one page; Command SaaS documentation "latest" |
 | Next-Generation Trust Security, and Certificate Manager, Self-Hosted | Palo Alto Networks, formerly CyberArk, formerly Venafi | **Next-Generation Trust Security** is the SaaS edition: "the evolution of the SaaS certificate lifecycle management offering previously known as Venafi TLS Protect and, more recently, CyberArk Certificate Manager SaaS" ([V1](#sources)). **Certificate Manager, Self-Hosted** is "built and delivered on the Trust Protection Foundation" ([V2](#sources)). Automated Secure Keypair is "included in Certificate Manager - SaaS premium packages by default" ([V6](#sources)) | Self-Hosted documentation 26.1. The SaaS documentation at docs.venafi.cloud, which still calls it Certificate Manager - SaaS |
 | DigiCert Trust Lifecycle Manager | DigiCert | DigiCert ONE, including "a private on-premises DigiCert ONE deployment" ([D2](#sources)) | docs.digicert.com, which is not versioned |
