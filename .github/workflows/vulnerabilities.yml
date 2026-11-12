@@ -24,7 +24,7 @@ jobs:
     name: npm audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # High and critical only: a moderate advisory in a dev-server dependency
       # is worth an update, not a red build.
       - run: npm audit --audit-level=high
